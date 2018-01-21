@@ -127,6 +127,7 @@ public class Main {
         for (Node param : paramList.children()) {
             if (param.getQualifiedName().equals(loopParamName)) {
                 output = description + file + func + lineNo + "\n";
+                System.out.println(output);
                 Files.write(path, output.getBytes(), StandardOpenOption.APPEND);
             }
         }
