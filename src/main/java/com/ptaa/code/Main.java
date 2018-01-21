@@ -6,7 +6,14 @@ import com.google.javascript.rhino.Node;
 import com.google.javascript.rhino.Token;
 import com.sun.org.apache.bcel.internal.generic.BranchInstruction;
 
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class Main {
     private static Compiler compiler;
@@ -23,7 +30,7 @@ public class Main {
         return compiler;
     }
 
-    public static boolean hasFunction(String fileName) {
+    public static boolean isFunction(String fileName) {
 
         sourceFile = SourceFile.fromFile(fileName);
         if (compiler == null) {
@@ -34,9 +41,9 @@ public class Main {
         return script.getFirstChild().isFunction();
     }
 
-    public static boolean hasForLoop(String fileName) {
+    public static void checkVulnerable(String fileName) throws Exception {
 
-        if (hasFunction(fileName)) {
+        if (isFunction(fileName)) {
             Node node = compiler.parse(sourceFile);
             Iterable iterable = node.children();
             Iterator iterator = iterable.iterator();
@@ -44,6 +51,8 @@ public class Main {
                 Node function = (Node) iterator.next();
                 Node paramList = function.getSecondChild();
                 String functionName = function.getFirstChild().getQualifiedName();
+                String output = "";
+                List<String> vulnerabiltiesList = new ArrayList<>();
 
                 for (Node node1 : function.children()) {
                     Iterator iter = node1.children().iterator();
@@ -53,17 +62,19 @@ public class Main {
                         switch (child.getToken()) {
                             case FOR:
                                 String forVar1 = child.getSecondChild().getSecondChild().getQualifiedName();
-                                decideVulnerable(function, paramList, functionName, child, forVar1);
+                                output = decideVulnerable(function, paramList, functionName, child, forVar1);
+                                vulnerabiltiesList.add(output);
 
                                 String forVar2 = child.getFirstChild().getFirstChild().getFirstChild().getQualifiedName();
-                                decideVulnerable(function, paramList, functionName, child, forVar2);
-
+                                output = decideVulnerable(function, paramList, functionName, child, forVar2);
+                                vulnerabiltiesList.add(output);
 
                             case WHILE:
                                 //case 1 : max used in while loop
 
                                 String whileVar = child.getFirstChild().getQualifiedName();
-                                decideVulnerable(function, paramList, functionName, child, whileVar);
+                                output = decideVulnerable(function, paramList, functionName, child, whileVar);
+                                vulnerabiltiesList.add(output);
 
                                 /*switch (child.getFirstChild().getToken()){
                                     case LT:
@@ -89,23 +100,58 @@ public class Main {
                             case FOR_IN:
                                 //case 4 : For in loop possible vulnerability
                                 String loopParamName = child.getSecondChild().getQualifiedName();
-                                decideVulnerable(function, paramList, functionName, child, loopParamName);
+                                output = decideVulnerable(function, paramList, functionName, child, loopParamName);
+                                vulnerabiltiesList.add(output);
+
                         }
                     }
                 }
 
+                printVulnerabilities(vulnerabiltiesList);
+
             }
 
         }
-
-        return true;
     }
 
-    private static void decideVulnerable(Node function, Node paramList, String functionName, Node child, String loopParamName) {
-        for (Node param : paramList.children()) {
-            if (param.getQualifiedName().equals(loopParamName)) {
-                System.out.println("possible vulnerable at file: " + function.getSourceFileName() + " function: " + functionName + " lineNo: " + child.getLineno());
+    private static void printVulnerabilities(List<String> vulnerabiltiesList) throws Exception {
+
+/*
+        Path path = Paths.get("src/test/resources/output.txt");
+        if(Files.exists(path)){
+            Files.delete(path);
+        }
+
+        Files.createFile(path);*/
+        PrintWriter pw = new PrintWriter(new FileWriter("src/test/resources/output.txt"));
+        for (String vulnerability : vulnerabiltiesList) {
+            if (!vulnerability.isEmpty()) {
+                pw.write(vulnerability);
+                System.out.println(vulnerability);
             }
         }
+        pw.close();
+
+
+    }
+
+    private static String decideVulnerable(Node function, Node paramList, String functionName, Node child, String loopParamName) {
+        String file = function.getSourceFileName();
+        String description = "possible vulnerable at file: ";
+        String lineNo = " lineNo: " + child.getLineno();
+        String func = " function: " + functionName;
+        String output = "";
+        for (Node param : paramList.children()) {
+            if (param.getQualifiedName().equals(loopParamName)) {
+                output = description + file + func + lineNo;
+            }
+        }
+
+        return output;
+
+    }
+
+    public static void main(String[] args) throws Exception {
+        checkVulnerable("src/test/resources/index.js");
     }
 }

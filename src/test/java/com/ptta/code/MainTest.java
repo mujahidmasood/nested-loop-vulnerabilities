@@ -9,8 +9,7 @@ public class MainTest {
     String file = "src/test/resources/index.js";
 
     @Test
-    public void hasForLoop(){
-        boolean hasForLoop = Main.hasForLoop(file);
-        assert (hasForLoop == true);
+    public void hasForLoop() throws Exception{
+        Main.checkVulnerable(file);
     }
 }
