@@ -1,0 +1,4 @@
+at file: src/test/resources/index.js function: whileLoop lineNo: 9
+at file: src/test/resources/index.js function: forLoopIncr lineNo: 16
+at file: src/test/resources/index.js function: forLoopDecr lineNo: 23
+at file: src/test/resources/index.js function: forInLoop lineNo: 30
