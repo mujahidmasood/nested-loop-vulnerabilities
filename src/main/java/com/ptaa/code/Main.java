@@ -61,20 +61,34 @@ public class Main {
                         Node child = (Node) iter.next();
 
                         switch (child.getToken()) {
-                            case FOR:
-                                String forVar1 = child.getSecondChild().getSecondChild().getQualifiedName();
-                                decideVulnerable(function, paramList, functionName, child, forVar1);
+                            case VAR:
+                                if(child.getFirstChild().getFirstChild() != null){
+                                    String varName = child.getFirstChild().getFirstChild().getQualifiedName();
+                                    decideVulnerable(function,paramList,functionName,child,varName);
+                                }
 
-                                String forVar2 = child.getFirstChild().getFirstChild().getFirstChild().getQualifiedName();
-                                decideVulnerable(function, paramList, functionName, child, forVar2);
+
+                            case FOR:
+                                if(child != null){
+                                    if(child.getSecondChild() != null && child.getSecondChild().getSecondChild() != null){
+                                        String forVar1 = child.getSecondChild().getSecondChild().getQualifiedName();
+                                        decideVulnerable(function, paramList, functionName, child, forVar1);
+                                    }
+
+                                    if(child.getFirstChild() != null && child.getFirstChild().getFirstChild().getFirstChild() != null){
+                                        String forVar2 = child.getFirstChild().getFirstChild().getFirstChild().getQualifiedName();
+                                        decideVulnerable(function, paramList, functionName, child, forVar2);
+                                    }
+                                }
 
 
                             case WHILE:
                                 //case 1 : max used in while loop
 
-                                String whileVar = child.getFirstChild().getQualifiedName();
-                                decideVulnerable(function, paramList, functionName, child, whileVar);
-
+                                if( child.getFirstChild() != null){
+                                    String whileVar = child.getFirstChild().getQualifiedName();
+                                    decideVulnerable(function, paramList, functionName, child, whileVar);
+                                }
 
                                 /*switch (child.getFirstChild().getToken()){
                                     case LT:
@@ -99,8 +113,10 @@ public class Main {
 
                             case FOR_IN:
                                 //case 4 : For in loop possible vulnerability
-                                String loopParamName = child.getSecondChild().getQualifiedName();
-                                decideVulnerable(function, paramList, functionName, child, loopParamName);
+                                if(child.getSecondChild() != null){
+                                    String loopParamName = child.getSecondChild().getQualifiedName();
+                                    decideVulnerable(function, paramList, functionName, child, loopParamName);
+                                }
 
                         }
                     }

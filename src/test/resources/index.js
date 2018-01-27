@@ -1,3 +1,9 @@
+function loopWithVarAssignemnt(max) {
+    var x = max;
+    while(x > 10 || x < 10){
+        console.log("x = "+x);
+    }
+}
 function whileConditional(max) {
 
     while(max > 10 || max < 10){
