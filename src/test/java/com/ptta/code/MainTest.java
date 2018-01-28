@@ -10,6 +10,6 @@ public class MainTest {
 
     @Test
     public void hasForLoop() throws Exception{
-        Main.checkVulnerable(file);
+        Main.readScriptFile(file);
     }
 }

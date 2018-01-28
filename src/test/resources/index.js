@@ -1,23 +1,48 @@
-function loopWithVarAssignemnt(max) {
-    var x = max;
-    while(x > 10 || x < 10){
-        console.log("x = "+x);
+function loopWithVarAssignemnt(max, min) {
+
+    var y = min-10;
+    var x = y;
+
+
+    for (var y = 0; y > 0; x++) {
+        // for (var x = 0; ( min || bar ) && !( min && bar ); x++) {
+        for (var a = 0; 0 || 1; z++) {
+            for (var a = 0; 0 && 2; z++) {
+                console.log("a" + a)
+            }
+        }
     }
 }
+
 function whileConditional(max) {
 
-    while(max > 10 || max < 10){
-        console.log("max = "+max);
+    while (max > 10 || max < 10) {
+        console.log("max = " + max);
     }
 }
 
 function whileLoop(max) {
-    while(max){
-        console.log("max = "+max);
+    while (true) {
+        while (x) {
+            while (max%10) {
+                console.log("max = " + max);
+            }
+
+        }
     }
 }
 
+function forInLoop(object1) {
+    for (var property1 in list) {
+        for(var p in object1){
+            string1 = string1 + object1[property1];
+        }
 
+    }
+    console(string1);
+}
+
+/*
 function forLoopIncr(max){
     for(var i=0; i< max;i++){
         console.log("i = "+i);
@@ -82,7 +107,7 @@ function timeoutLoop() {
             console.log("---");
         },3000)
     }
-}
+}*/
 
 ///////////////////////////////////////////////////////////////////////
 
