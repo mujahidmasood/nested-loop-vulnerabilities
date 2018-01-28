@@ -88,13 +88,13 @@ public class Main {
                         if(child.getFirstChild() != null){
                             String mappedVar = "";
                             String assignedVar = "";
-                            if(getQualifiedName(child.getFirstChild() )!= null){
-                                assignedVar = getQualifiedName(child.getFirstChild());
+                            if(child.getFirstChild().getQualifiedName()!= null){
+                                assignedVar = child.getFirstChild().getQualifiedName();
                             }
 
                             if(child.getFirstChild().getFirstChild() != null){
-                                if(getQualifiedName(child.getFirstChild().getFirstChild()) != null){
-                                    mappedVar = getQualifiedName(child.getFirstChild().getFirstChild());
+                                if(child.getFirstChild().getFirstChild().getQualifiedName() != null){
+                                    mappedVar = child.getFirstChild().getFirstChild().getQualifiedName();
                                 }
                             }
 
@@ -136,10 +136,10 @@ public class Main {
                         String rightOp = "";
 
                         if (child.getFirstChild() != null) {
-                            leftOp = getQualifiedName(child.getFirstChild());
+                            leftOp = child.getFirstChild().getQualifiedName();
                         }
                         if (child.getSecondChild() != null) {
-                            rightOp = getQualifiedName(child.getSecondChild());
+                            rightOp = child.getSecondChild().getQualifiedName();
                         }
 
                         decideVulnerable(geChild, leftOp);
@@ -207,9 +207,6 @@ public class Main {
         }
     }
 
-    public static String getQualifiedName(Node child) {
-        return child.getQualifiedName();
-    }
 
     public static void writeOutput(String output) throws Exception {
         Path path = Paths.get("src/test/resources/output.txt");
