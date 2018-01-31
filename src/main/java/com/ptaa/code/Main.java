@@ -9,6 +9,9 @@ import java.nio.file.*;
 import java.util.*;
 
 //TODO test on node module(npm userAgent, httpHeaderParsing npm module).
+//TODO Identify anonymous functions
+//TODO reduce number of wrongly identified vulnerabilities
+//TODO array.length or string.length used in loop
 //TODO identify function, figure out how to run
 //TODO function call
 //TODO Array argument
@@ -37,23 +40,29 @@ public class Main {
 
     public static void readScriptFile(String fileName) throws Exception {
         sourceFile = SourceFile.fromFile(fileName);
+        System.out.println(sourceFile);
         if (compiler == null) {
             compiler = init();
         }
 
         Node main = compiler.parse(sourceFile).removeFirstChild();
         Node script = new Node(Token.SCRIPT, main);
-        if (script.getFirstChild().isFunction()) {
+       // if (script.getFirstChild().isFunction()) {
             Node node = compiler.parse(sourceFile);
             Iterable iterable = node.children();
             Iterator iterator = iterable.iterator();
             while (iterator.hasNext()) {
                 function = (Node) iterator.next();
+
                 Node paramList = function.getSecondChild();
                 params = new ArrayList<>();
-                for (Node param : paramList.children()) {
-                    params.add(param.getQualifiedName());
+
+                if(paramList != null && paramList.children() != null){
+                    for (Node param : paramList.children()) {
+                        params.add(param.getQualifiedName());
+                    }
                 }
+
 
                 for (Node node1 : function.children()) {
                     Iterator iter = node1.children().iterator();
@@ -63,11 +72,12 @@ public class Main {
                         iterateScript(child);
                     }
                 }
-            }
+         //   }
         }
     }
 
     public static void iterateScript(Node child) throws Exception {
+
 
         if (child.getToken() != null) {
             switch (child.getToken()) {
@@ -214,6 +224,6 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception {
-        readScriptFile("src/test/resources/index.js");
+        readScriptFile("src/test/resources/react-metrics-graphics.js");
     }
 }
