@@ -40,44 +40,36 @@ public class Main {
 
     public static void readScriptFile(String fileName) throws Exception {
         sourceFile = SourceFile.fromFile(fileName);
-        System.out.println(sourceFile);
         if (compiler == null) {
             compiler = init();
         }
 
-        Node main = compiler.parse(sourceFile).removeFirstChild();
-        Node script = new Node(Token.SCRIPT, main);
-       // if (script.getFirstChild().isFunction()) {
-            Node node = compiler.parse(sourceFile);
-            Iterable iterable = node.children();
-            Iterator iterator = iterable.iterator();
-            while (iterator.hasNext()) {
-                function = (Node) iterator.next();
+        Node node = compiler.parse(sourceFile);
+        Iterable iterable = node.children();
+        Iterator iterator = iterable.iterator();
+        while (iterator.hasNext()) {
+            function = (Node) iterator.next();
 
-                Node paramList = function.getSecondChild();
-                params = new ArrayList<>();
+            Node paramList = function.getSecondChild();
+            params = new ArrayList<>();
 
-                if(paramList != null && paramList.children() != null){
-                    for (Node param : paramList.children()) {
-                        params.add(param.getQualifiedName());
-                    }
+            if (paramList != null && paramList.children() != null) {
+                for (Node param : paramList.children()) {
+                    params.add(param.getQualifiedName());
                 }
+            }
 
-
-                for (Node node1 : function.children()) {
-                    Iterator iter = node1.children().iterator();
-                    while (iter.hasNext()) {
-                        Node child = (Node) iter.next();
-                        System.out.println(child);
-                        iterateScript(child);
-                    }
+            for (Node node1 : function.children()) {
+                Iterator iter = node1.children().iterator();
+                while (iter.hasNext()) {
+                    Node child = (Node) iter.next();
+                    iterateScript(child);
                 }
-         //   }
+            }
         }
     }
 
     public static void iterateScript(Node child) throws Exception {
-
 
         if (child.getToken() != null) {
             switch (child.getToken()) {
@@ -91,19 +83,19 @@ public class Main {
                     break;
                 case VAR:
                     for (Node var : child.children()) {
-                        if(var.getFirstChild() != null){
+                        if (var.getFirstChild() != null) {
                             iterateScript(var.getFirstChild());
                         }
 
-                        if(child.getFirstChild() != null){
+                        if (child.getFirstChild() != null) {
                             String mappedVar = "";
                             String assignedVar = "";
-                            if(child.getFirstChild().getQualifiedName()!= null){
+                            if (child.getFirstChild().getQualifiedName() != null) {
                                 assignedVar = child.getFirstChild().getQualifiedName();
                             }
 
-                            if(child.getFirstChild().getFirstChild() != null){
-                                if(child.getFirstChild().getFirstChild().getQualifiedName() != null){
+                            if (child.getFirstChild().getFirstChild() != null) {
+                                if (child.getFirstChild().getFirstChild().getQualifiedName() != null) {
                                     mappedVar = child.getFirstChild().getFirstChild().getQualifiedName();
                                 }
                             }
@@ -120,6 +112,9 @@ public class Main {
                     break;
 
                 case NAME:
+                    decideVulnerable(child,child.getQualifiedName());
+                    break;
+                case STRING:
                     break;
                 case NUMBER:
                     break;
@@ -178,14 +173,19 @@ public class Main {
 
                 case FOR_IN:
                     for (Node for_in : child.children()) {
-                        if(for_in != null){
+                        if (for_in != null) {
                             iterateScript(for_in);
                         }
-                        if(child.getSecondChild()!= null && child.getSecondChild().getQualifiedName() != null){
+                        if (child.getSecondChild() != null && child.getSecondChild().getQualifiedName() != null) {
                             String param = child.getSecondChild().getQualifiedName();
-                            assignedVars.put(param,param);
+                            assignedVars.put(param, param);
                             decideVulnerable(for_in, param);
                         }
+                    }
+                    break;
+                case GETPROP:
+                    for(Node prop : child.children()){
+                        iterateScript(prop);
                     }
                     break;
                 default:
@@ -223,7 +223,4 @@ public class Main {
         Files.write(path, output.getBytes(), StandardOpenOption.APPEND);
     }
 
-    public static void main(String[] args) throws Exception {
-        readScriptFile("src/test/resources/react-metrics-graphics.js");
-    }
 }

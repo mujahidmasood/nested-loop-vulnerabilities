@@ -1,0 +1,2 @@
+at file: src/test/resources/index.js function: arrayLength lineNo: 1
+at file: src/test/resources/index.js function: arrayLength lineNo: 3

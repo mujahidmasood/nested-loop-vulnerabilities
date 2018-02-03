@@ -1,3 +1,9 @@
+function arrayLength(array){
+
+    for(var i = 0; i<array.length; i++){
+    }
+}
+/*
 function loopWithVarAssignemnt(max, min) {
 
     var y = min-10;
@@ -41,6 +47,7 @@ function forInLoop(object1) {
     }
     console(string1);
 }
+*/
 
 /*
 function forLoopIncr(max){
