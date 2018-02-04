@@ -3,7 +3,6 @@ package com.ptaa.code;
 import com.google.javascript.jscomp.*;
 import com.google.javascript.jscomp.Compiler;
 import com.google.javascript.rhino.Node;
-import com.google.javascript.rhino.Token;
 
 import java.nio.file.*;
 import java.util.*;
@@ -70,7 +69,7 @@ public class Main {
     }
 
     public static void iterateScript(Node child) throws Exception {
-
+        System.out.println(child);
         if (child.getToken() != null) {
             switch (child.getToken()) {
                 case BLOCK:
@@ -95,8 +94,12 @@ public class Main {
                             }
 
                             if (child.getFirstChild().getFirstChild() != null) {
-                                if (child.getFirstChild().getFirstChild().getQualifiedName() != null) {
-                                    mappedVar = child.getFirstChild().getFirstChild().getQualifiedName();
+                                if (child.getFirstChild().getFirstChild().isGetProp()) {
+                                    mappedVar = child.getFirstChild().getFirstChild().getFirstChild().getQualifiedName();
+                                } else {
+                                    if (child.getFirstChild().getFirstChild().getQualifiedName() != null) {
+                                        mappedVar = child.getFirstChild().getFirstChild().getQualifiedName();
+                                    }
                                 }
                             }
 
@@ -104,7 +107,10 @@ public class Main {
                                 assignedVars.put(assignedVar, mappedVar);
                             }
 
+                            decideVulnerable(var, mappedVar);
                             decideVulnerable(var, assignedVar);
+
+
                         }
 
                     }
@@ -112,7 +118,9 @@ public class Main {
                     break;
 
                 case NAME:
-                    decideVulnerable(child,child.getQualifiedName());
+                    if (!child.getParent().isParamList()) {
+                        decideVulnerable(child, child.getQualifiedName());
+                    }
                     break;
                 case STRING:
                     break;
@@ -143,12 +151,15 @@ public class Main {
                         if (child.getFirstChild() != null) {
                             leftOp = child.getFirstChild().getQualifiedName();
                         }
+
                         if (child.getSecondChild() != null) {
                             rightOp = child.getSecondChild().getQualifiedName();
                         }
 
+                        assignedVars.put(leftOp, rightOp);
                         decideVulnerable(geChild, leftOp);
                         decideVulnerable(geChild, rightOp);
+
 
                     }
                     break;
@@ -158,15 +169,21 @@ public class Main {
                     for (Node incChild : child.children()) {
                         String unaryOp = incChild.getQualifiedName();
                         decideVulnerable(incChild, unaryOp);
+
                     }
                     break;
                 case EXPR_RESULT:
                 case CALL:
                 case WHILE:
+                case FOR_OF:
+                    System.out.println(child);
+                    break;
                 case FOR:
                     if (child != null) {
                         for (Node node : child.children()) {
                             iterateScript(node);
+                            String name1 = node.getQualifiedName();
+                            decideVulnerable(node, name1);
                         }
                     }
                     break;
@@ -183,12 +200,34 @@ public class Main {
                         }
                     }
                     break;
+                case PARAM_LIST:
                 case GETPROP:
-                    for(Node prop : child.children()){
-                        iterateScript(prop);
-                    }
-                    break;
+                case FUNCTION:
+                case RETURN:
+                case EXPORT:
+                case NEW:
+                case TRY:
+                case ENUM:
+                case NULL:
+                case PIPE:
+                case THIS:
+                case TRUE:
+                case FALSE:
+                case INSTANCEOF:
+                case OBJECTLIT:
+                case OBJECT_PATTERN:
+                case SCRIPT:
+                case UNDEFINED_TYPE:
+                case FUNCTION_TYPE:
+                case DO:
+                case IN:
+                case ANY_TYPE:
+                case CLASS_MEMBERS:
+                case MODULE_BODY:
                 default:
+                    for(Node node : child.children()){
+                        iterateScript(node);
+                    }
                     break;
 
             }
@@ -199,8 +238,8 @@ public class Main {
 
     private static void decideVulnerable(Node child, String varName) throws Exception {
 
-
         String functionName = function.getFirstChild().getQualifiedName();
+
 
         String file = function.getSourceFileName();
         String description = "at file: ";
@@ -212,8 +251,8 @@ public class Main {
 
         if (params.contains(mappedVarValue) || params.contains(varName)) {
             output = description + file + func + lineNo + "\n";
-            System.out.println(output);
             writeOutput(output);
+
         }
     }
 

@@ -26,83 +26,118 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE. */
 
 (function webpackUniversalModuleDefinition(root, factory) {
-    if(typeof exports === 'object' && typeof module === 'object')
+    if (typeof exports === 'object' && typeof module === 'object')
         module.exports = factory();
-    else if(typeof define === 'function' && define.amd)
+    else if (typeof define === 'function' && define.amd)
         define([], factory);
     else {
         var a = factory();
-        for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
+        for (var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
     }
-})(this, function() {
-    return /******/ (function(modules) { // webpackBootstrap
+})(this, function () {
+    return /******/ (function (modules) { // webpackBootstrap
         /******/ 	// The module cache
-        /******/ 	var installedModules = {};
+        /******/
+        var installedModules = {};
         /******/
         /******/ 	// The require function
-        /******/ 	function __webpack_require__(moduleId) {
+        /******/
+        function __webpack_require__(moduleId) {
             /******/
             /******/ 		// Check if module is in cache
-            /******/ 		if(installedModules[moduleId]) {
-                /******/ 			return installedModules[moduleId].exports;
-                /******/ 		}
+            /******/
+            if (installedModules[moduleId]) {
+                /******/
+                return installedModules[moduleId].exports;
+                /******/
+            }
             /******/ 		// Create a new module (and put it into the cache)
-            /******/ 		var module = installedModules[moduleId] = {
-                /******/ 			i: moduleId,
-                /******/ 			l: false,
-                /******/ 			exports: {}
-                /******/ 		};
+            /******/
+            var module = installedModules[moduleId] = {
+                /******/            i: moduleId,
+                /******/            l: false,
+                /******/            exports: {}
+                /******/
+            };
             /******/
             /******/ 		// Execute the module function
-            /******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+            /******/
+            modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
             /******/
             /******/ 		// Flag the module as loaded
-            /******/ 		module.l = true;
+            /******/
+            module.l = true;
             /******/
             /******/ 		// Return the exports of the module
-            /******/ 		return module.exports;
-            /******/ 	}
+            /******/
+            return module.exports;
+            /******/
+        }
+
         /******/
         /******/
         /******/ 	// expose the modules object (__webpack_modules__)
-        /******/ 	__webpack_require__.m = modules;
+        /******/
+        __webpack_require__.m = modules;
         /******/
         /******/ 	// expose the module cache
-        /******/ 	__webpack_require__.c = installedModules;
+        /******/
+        __webpack_require__.c = installedModules;
         /******/
         /******/ 	// define getter function for harmony exports
-        /******/ 	__webpack_require__.d = function(exports, name, getter) {
-            /******/ 		if(!__webpack_require__.o(exports, name)) {
-                /******/ 			Object.defineProperty(exports, name, {
-                    /******/ 				configurable: false,
-                    /******/ 				enumerable: true,
-                    /******/ 				get: getter
-                    /******/ 			});
-                /******/ 		}
-            /******/ 	};
+        /******/
+        __webpack_require__.d = function (exports, name, getter) {
+            /******/
+            if (!__webpack_require__.o(exports, name)) {
+                /******/
+                Object.defineProperty(exports, name, {
+                    /******/                configurable: false,
+                    /******/                enumerable: true,
+                    /******/                get: getter
+                    /******/
+                });
+                /******/
+            }
+            /******/
+        };
         /******/
         /******/ 	// getDefaultExport function for compatibility with non-harmony modules
-        /******/ 	__webpack_require__.n = function(module) {
-            /******/ 		var getter = module && module.__esModule ?
-                /******/ 			function getDefault() { return module['default']; } :
-                /******/ 			function getModuleExports() { return module; };
-            /******/ 		__webpack_require__.d(getter, 'a', getter);
-            /******/ 		return getter;
-            /******/ 	};
+        /******/
+        __webpack_require__.n = function (module) {
+            /******/
+            var getter = module && module.__esModule ?
+                /******/            function getDefault() {
+                    return module['default'];
+                } :
+                /******/            function getModuleExports() {
+                    return module;
+                };
+            /******/
+            __webpack_require__.d(getter, 'a', getter);
+            /******/
+            return getter;
+            /******/
+        };
         /******/
         /******/ 	// Object.prototype.hasOwnProperty.call
-        /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+        /******/
+        __webpack_require__.o = function (object, property) {
+            return Object.prototype.hasOwnProperty.call(object, property);
+        };
         /******/
         /******/ 	// __webpack_public_path__
-        /******/ 	__webpack_require__.p = "";
+        /******/
+        __webpack_require__.p = "";
         /******/
         /******/ 	// Load entry module and return exports
-        /******/ 	return __webpack_require__(__webpack_require__.s = 4);
-        /******/ })
+        /******/
+        return __webpack_require__(__webpack_require__.s = 4);
+        /******/
+    })
     /************************************************************************/
-    /******/ ([
+    /******/([
         /* 0 */
-        /***/ (function(module, exports, __webpack_require__) {
+        /***/ (function (module, exports, __webpack_require__) {
 
             "use strict";
 
@@ -176,9 +211,10 @@ THE SOFTWARE. */
                 return Math.abs(a - b) <= EPSILON * Math.max(1.0, Math.abs(a), Math.abs(b));
             }
 
-            /***/ }),
+            /***/
+        }),
         /* 1 */
-        /***/ (function(module, exports, __webpack_require__) {
+        /***/ (function (module, exports, __webpack_require__) {
 
             "use strict";
 
@@ -222,7 +258,20 @@ THE SOFTWARE. */
 
             var glMatrix = _interopRequireWildcard(_common);
 
-            function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+            function _interopRequireWildcard(obj) {
+                if (obj && obj.__esModule) {
+                    return obj;
+                } else {
+                    var newObj = {};
+                    if (obj != null) {
+                        for (var key in obj) {
+                            if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
+                        }
+                    }
+                    newObj.default = obj;
+                    return newObj;
+                }
+            }
 
             /**
              * 3x3 Matrix
@@ -255,6 +304,7 @@ THE SOFTWARE. */
              * @param {mat4} a   the source 4x4 matrix
              * @returns {mat3} out
              */
+
             /* Copyright (c) 2015, Brandon Jones, Colin MacKenzie IV.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -1051,9 +1101,10 @@ THE SOFTWARE. */
              */
             var sub = exports.sub = subtract;
 
-            /***/ }),
+            /***/
+        }),
         /* 2 */
-        /***/ (function(module, exports, __webpack_require__) {
+        /***/ (function (module, exports, __webpack_require__) {
 
             "use strict";
 
@@ -1106,7 +1157,20 @@ THE SOFTWARE. */
 
             var glMatrix = _interopRequireWildcard(_common);
 
-            function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+            function _interopRequireWildcard(obj) {
+                if (obj && obj.__esModule) {
+                    return obj;
+                } else {
+                    var newObj = {};
+                    if (obj != null) {
+                        for (var key in obj) {
+                            if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
+                        }
+                    }
+                    newObj.default = obj;
+                    return newObj;
+                }
+            }
 
             /**
              * 3 Dimensional Vector
@@ -1132,6 +1196,7 @@ THE SOFTWARE. */
              * @param {vec3} a vector to clone
              * @returns {vec3} a new 3D vector
              */
+
             /* Copyright (c) 2015, Brandon Jones, Colin MacKenzie IV.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -1892,18 +1957,23 @@ THE SOFTWARE. */
                     }
 
                     for (i = offset; i < l; i += stride) {
-                        vec[0] = a[i];vec[1] = a[i + 1];vec[2] = a[i + 2];
+                        vec[0] = a[i];
+                        vec[1] = a[i + 1];
+                        vec[2] = a[i + 2];
                         fn(vec, vec, arg);
-                        a[i] = vec[0];a[i + 1] = vec[1];a[i + 2] = vec[2];
+                        a[i] = vec[0];
+                        a[i + 1] = vec[1];
+                        a[i + 2] = vec[2];
                     }
 
                     return a;
                 };
             }();
 
-            /***/ }),
+            /***/
+        }),
         /* 3 */
-        /***/ (function(module, exports, __webpack_require__) {
+        /***/ (function (module, exports, __webpack_require__) {
 
             "use strict";
 
@@ -1948,7 +2018,20 @@ THE SOFTWARE. */
 
             var glMatrix = _interopRequireWildcard(_common);
 
-            function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+            function _interopRequireWildcard(obj) {
+                if (obj && obj.__esModule) {
+                    return obj;
+                } else {
+                    var newObj = {};
+                    if (obj != null) {
+                        for (var key in obj) {
+                            if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
+                        }
+                    }
+                    newObj.default = obj;
+                    return newObj;
+                }
+            }
 
             /**
              * 4 Dimensional Vector
@@ -1975,6 +2058,7 @@ THE SOFTWARE. */
              * @param {vec4} a vector to clone
              * @returns {vec4} a new 4D vector
              */
+
             /* Copyright (c) 2015, Brandon Jones, Colin MacKenzie IV.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -2558,18 +2642,25 @@ THE SOFTWARE. */
                     }
 
                     for (i = offset; i < l; i += stride) {
-                        vec[0] = a[i];vec[1] = a[i + 1];vec[2] = a[i + 2];vec[3] = a[i + 3];
+                        vec[0] = a[i];
+                        vec[1] = a[i + 1];
+                        vec[2] = a[i + 2];
+                        vec[3] = a[i + 3];
                         fn(vec, vec, arg);
-                        a[i] = vec[0];a[i + 1] = vec[1];a[i + 2] = vec[2];a[i + 3] = vec[3];
+                        a[i] = vec[0];
+                        a[i + 1] = vec[1];
+                        a[i + 2] = vec[2];
+                        a[i + 3] = vec[3];
                     }
 
                     return a;
                 };
             }();
 
-            /***/ }),
+            /***/
+        }),
         /* 4 */
-        /***/ (function(module, exports, __webpack_require__) {
+        /***/ (function (module, exports, __webpack_require__) {
 
             "use strict";
 
@@ -2615,7 +2706,20 @@ THE SOFTWARE. */
 
             var vec4 = _interopRequireWildcard(_vec3);
 
-            function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+            function _interopRequireWildcard(obj) {
+                if (obj && obj.__esModule) {
+                    return obj;
+                } else {
+                    var newObj = {};
+                    if (obj != null) {
+                        for (var key in obj) {
+                            if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
+                        }
+                    }
+                    newObj.default = obj;
+                    return newObj;
+                }
+            }
 
             exports.glMatrix = glMatrix;
             exports.mat2 = mat2;
@@ -2625,7 +2729,8 @@ THE SOFTWARE. */
             exports.quat = quat;
             exports.vec2 = vec2;
             exports.vec3 = vec3;
-            exports.vec4 = vec4; /**
+            exports.vec4 = vec4;
+            /**
              * @fileoverview gl-matrix - High performance matrix and vector operations
              * @author Brandon Jones
              * @author Colin MacKenzie IV
@@ -2653,9 +2758,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE. */
 // END HEADER
 
-            /***/ }),
+            /***/
+        }),
         /* 5 */
-        /***/ (function(module, exports, __webpack_require__) {
+        /***/ (function (module, exports, __webpack_require__) {
 
             "use strict";
 
@@ -2693,7 +2799,20 @@ THE SOFTWARE. */
 
             var glMatrix = _interopRequireWildcard(_common);
 
-            function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+            function _interopRequireWildcard(obj) {
+                if (obj && obj.__esModule) {
+                    return obj;
+                } else {
+                    var newObj = {};
+                    if (obj != null) {
+                        for (var key in obj) {
+                            if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
+                        }
+                    }
+                    newObj.default = obj;
+                    return newObj;
+                }
+            }
 
             /**
              * 2x2 Matrix
@@ -2720,6 +2839,7 @@ THE SOFTWARE. */
              * @param {mat2} a matrix to clone
              * @returns {mat2} a new 2x2 matrix
              */
+
             /* Copyright (c) 2015, Brandon Jones, Colin MacKenzie IV.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -3146,9 +3266,10 @@ THE SOFTWARE. */
              */
             var sub = exports.sub = subtract;
 
-            /***/ }),
+            /***/
+        }),
         /* 6 */
-        /***/ (function(module, exports, __webpack_require__) {
+        /***/ (function (module, exports, __webpack_require__) {
 
             "use strict";
 
@@ -3185,7 +3306,20 @@ THE SOFTWARE. */
 
             var glMatrix = _interopRequireWildcard(_common);
 
-            function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+            function _interopRequireWildcard(obj) {
+                if (obj && obj.__esModule) {
+                    return obj;
+                } else {
+                    var newObj = {};
+                    if (obj != null) {
+                        for (var key in obj) {
+                            if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
+                        }
+                    }
+                    newObj.default = obj;
+                    return newObj;
+                }
+            }
 
             /**
              * 2x3 Matrix
@@ -3228,6 +3362,7 @@ THE SOFTWARE. */
              * @param {mat2d} a matrix to clone
              * @returns {mat2d} a new 2x3 matrix
              */
+
             /* Copyright (c) 2015, Brandon Jones, Colin MacKenzie IV.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -3688,9 +3823,10 @@ THE SOFTWARE. */
              */
             var sub = exports.sub = subtract;
 
-            /***/ }),
+            /***/
+        }),
         /* 7 */
-        /***/ (function(module, exports, __webpack_require__) {
+        /***/ (function (module, exports, __webpack_require__) {
 
             "use strict";
 
@@ -3748,7 +3884,20 @@ THE SOFTWARE. */
 
             var glMatrix = _interopRequireWildcard(_common);
 
-            function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+            function _interopRequireWildcard(obj) {
+                if (obj && obj.__esModule) {
+                    return obj;
+                } else {
+                    var newObj = {};
+                    if (obj != null) {
+                        for (var key in obj) {
+                            if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
+                        }
+                    }
+                    newObj.default = obj;
+                    return newObj;
+                }
+            }
 
             /**
              * 4x4 Matrix
@@ -3787,6 +3936,7 @@ THE SOFTWARE. */
              * @param {mat4} a matrix to clone
              * @returns {mat4} a new 4x4 matrix
              */
+
             /* Copyright (c) 2015, Brandon Jones, Colin MacKenzie IV.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -4203,19 +4353,28 @@ THE SOFTWARE. */
                 out[2] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
                 out[3] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
 
-                b0 = b[4];b1 = b[5];b2 = b[6];b3 = b[7];
+                b0 = b[4];
+                b1 = b[5];
+                b2 = b[6];
+                b3 = b[7];
                 out[4] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
                 out[5] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
                 out[6] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
                 out[7] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
 
-                b0 = b[8];b1 = b[9];b2 = b[10];b3 = b[11];
+                b0 = b[8];
+                b1 = b[9];
+                b2 = b[10];
+                b3 = b[11];
                 out[8] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
                 out[9] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
                 out[10] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
                 out[11] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
 
-                b0 = b[12];b1 = b[13];b2 = b[14];b3 = b[15];
+                b0 = b[12];
+                b1 = b[13];
+                b2 = b[14];
+                b3 = b[15];
                 out[12] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
                 out[13] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
                 out[14] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
@@ -4254,13 +4413,31 @@ THE SOFTWARE. */
                     out[14] = a[2] * x + a[6] * y + a[10] * z + a[14];
                     out[15] = a[3] * x + a[7] * y + a[11] * z + a[15];
                 } else {
-                    a00 = a[0];a01 = a[1];a02 = a[2];a03 = a[3];
-                    a10 = a[4];a11 = a[5];a12 = a[6];a13 = a[7];
-                    a20 = a[8];a21 = a[9];a22 = a[10];a23 = a[11];
+                    a00 = a[0];
+                    a01 = a[1];
+                    a02 = a[2];
+                    a03 = a[3];
+                    a10 = a[4];
+                    a11 = a[5];
+                    a12 = a[6];
+                    a13 = a[7];
+                    a20 = a[8];
+                    a21 = a[9];
+                    a22 = a[10];
+                    a23 = a[11];
 
-                    out[0] = a00;out[1] = a01;out[2] = a02;out[3] = a03;
-                    out[4] = a10;out[5] = a11;out[6] = a12;out[7] = a13;
-                    out[8] = a20;out[9] = a21;out[10] = a22;out[11] = a23;
+                    out[0] = a00;
+                    out[1] = a01;
+                    out[2] = a02;
+                    out[3] = a03;
+                    out[4] = a10;
+                    out[5] = a11;
+                    out[6] = a12;
+                    out[7] = a13;
+                    out[8] = a20;
+                    out[9] = a21;
+                    out[10] = a22;
+                    out[11] = a23;
 
                     out[12] = a00 * x + a10 * y + a20 * z + a[12];
                     out[13] = a01 * x + a11 * y + a21 * z + a[13];
@@ -4355,14 +4532,29 @@ THE SOFTWARE. */
                 c = Math.cos(rad);
                 t = 1 - c;
 
-                a00 = a[0];a01 = a[1];a02 = a[2];a03 = a[3];
-                a10 = a[4];a11 = a[5];a12 = a[6];a13 = a[7];
-                a20 = a[8];a21 = a[9];a22 = a[10];a23 = a[11];
+                a00 = a[0];
+                a01 = a[1];
+                a02 = a[2];
+                a03 = a[3];
+                a10 = a[4];
+                a11 = a[5];
+                a12 = a[6];
+                a13 = a[7];
+                a20 = a[8];
+                a21 = a[9];
+                a22 = a[10];
+                a23 = a[11];
 
                 // Construct the elements of the rotation matrix
-                b00 = x * x * t + c;b01 = y * x * t + z * s;b02 = z * x * t - y * s;
-                b10 = x * y * t - z * s;b11 = y * y * t + c;b12 = z * y * t + x * s;
-                b20 = x * z * t + y * s;b21 = y * z * t - x * s;b22 = z * z * t + c;
+                b00 = x * x * t + c;
+                b01 = y * x * t + z * s;
+                b02 = z * x * t - y * s;
+                b10 = x * y * t - z * s;
+                b11 = y * y * t + c;
+                b12 = z * y * t + x * s;
+                b20 = x * z * t + y * s;
+                b21 = y * z * t - x * s;
+                b22 = z * z * t + c;
 
                 // Perform rotation-specific matrix multiplication
                 out[0] = a00 * b00 + a10 * b01 + a20 * b02;
@@ -5549,9 +5741,10 @@ THE SOFTWARE. */
              */
             var sub = exports.sub = subtract;
 
-            /***/ }),
+            /***/
+        }),
         /* 8 */
-        /***/ (function(module, exports, __webpack_require__) {
+        /***/ (function (module, exports, __webpack_require__) {
 
             "use strict";
 
@@ -5592,7 +5785,20 @@ THE SOFTWARE. */
 
             var vec4 = _interopRequireWildcard(_vec2);
 
-            function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+            function _interopRequireWildcard(obj) {
+                if (obj && obj.__esModule) {
+                    return obj;
+                } else {
+                    var newObj = {};
+                    if (obj != null) {
+                        for (var key in obj) {
+                            if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
+                        }
+                    }
+                    newObj.default = obj;
+                    return newObj;
+                }
+            }
 
             /**
              * Quaternion
@@ -5604,6 +5810,7 @@ THE SOFTWARE. */
              *
              * @returns {quat} a new quaternion
              */
+
             /* Copyright (c) 2015, Brandon Jones, Colin MacKenzie IV.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -6246,9 +6453,10 @@ THE SOFTWARE. */
                 };
             }();
 
-            /***/ }),
+            /***/
+        }),
         /* 9 */
-        /***/ (function(module, exports, __webpack_require__) {
+        /***/ (function (module, exports, __webpack_require__) {
 
             "use strict";
 
@@ -6296,7 +6504,20 @@ THE SOFTWARE. */
 
             var glMatrix = _interopRequireWildcard(_common);
 
-            function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+            function _interopRequireWildcard(obj) {
+                if (obj && obj.__esModule) {
+                    return obj;
+                } else {
+                    var newObj = {};
+                    if (obj != null) {
+                        for (var key in obj) {
+                            if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
+                        }
+                    }
+                    newObj.default = obj;
+                    return newObj;
+                }
+            }
 
             /**
              * 2 Dimensional Vector
@@ -6321,6 +6542,7 @@ THE SOFTWARE. */
              * @param {vec2} a vector to clone
              * @returns {vec2} a new 2D vector
              */
+
             /* Copyright (c) 2015, Brandon Jones, Colin MacKenzie IV.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -6874,15 +7096,18 @@ THE SOFTWARE. */
                     }
 
                     for (i = offset; i < l; i += stride) {
-                        vec[0] = a[i];vec[1] = a[i + 1];
+                        vec[0] = a[i];
+                        vec[1] = a[i + 1];
                         fn(vec, vec, arg);
-                        a[i] = vec[0];a[i + 1] = vec[1];
+                        a[i] = vec[0];
+                        a[i + 1] = vec[1];
                     }
 
                     return a;
                 };
             }();
 
-            /***/ })
-        /******/ ]);
+            /***/
+        })
+        /******/]);
 });

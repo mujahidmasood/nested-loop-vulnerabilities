@@ -1,16 +1,21 @@
+function functionCall (max) {
+    var a = max.length;
+    for(var i = 0; i < a ; i++){
+        console.log(a);
+    }
+}
 function arrayLength(array){
-
     for(var i = 0; i<array.length; i++){
     }
 }
-/*
+
 function loopWithVarAssignemnt(max, min) {
 
     var y = min-10;
     var x = y;
 
 
-    for (var y = 0; y > 0; x++) {
+    for (var y = 0; y > min; x++) {
         // for (var x = 0; ( min || bar ) && !( min && bar ); x++) {
         for (var a = 0; 0 || 1; z++) {
             for (var a = 0; 0 && 2; z++) {
@@ -47,7 +52,6 @@ function forInLoop(object1) {
     }
     console(string1);
 }
-*/
 
 /*
 function forLoopIncr(max){
