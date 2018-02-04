@@ -62,7 +62,9 @@ public class Main {
                 Iterator iter = node1.children().iterator();
                 while (iter.hasNext()) {
                     Node child = (Node) iter.next();
-                    iterateScript(child);
+                    if (child != null) {
+                        iterateScript(child);
+                    }
                 }
             }
         }
@@ -73,10 +75,14 @@ public class Main {
         if (child.getToken() != null) {
             switch (child.getToken()) {
                 case BLOCK:
-                    for (Node block : child.children()) {
-                        iterateScript(block);
-                        if (block.getFirstChild().getQualifiedName() != null) {
-                            decideVulnerable(block, block.getFirstChild().getQualifiedName());
+                    if (child.children() != null) {
+                        for (Node block : child.children()) {
+                            if (block != null) {
+                                iterateScript(block);
+                                if (block.getFirstChild() != null && block.getFirstChild().getQualifiedName() != null) {
+                                    decideVulnerable(block, block.getFirstChild().getQualifiedName());
+                                }
+                            }
                         }
                     }
                     break;
@@ -122,12 +128,7 @@ public class Main {
                         decideVulnerable(child, child.getQualifiedName());
                     }
                     break;
-                case STRING:
-                    break;
-                case NUMBER:
-                    break;
                 case IF:
-                    break;
                 case OR:
                 case BITXOR:
                 case AND:
@@ -141,27 +142,34 @@ public class Main {
                 case DIV:
                 case MUL:
                 case ADD:
+                case SWITCH:
+                case CONTINUE:
+                case COLON:
+                case COMMA:
                 case SUB:
                 case ASSIGN:
-                    for (Node geChild : child.children()) {
-                        iterateScript(geChild);
-                        String leftOp = "";
-                        String rightOp = "";
+                    if (child != null && child.children() != null) {
+                        for (Node geChild : child.children()) {
+                            if (geChild != null) {
+                                iterateScript(geChild);
+                                String leftOp = "";
+                                String rightOp = "";
 
-                        if (child.getFirstChild() != null) {
-                            leftOp = child.getFirstChild().getQualifiedName();
+                                if (child.getFirstChild() != null) {
+                                    leftOp = child.getFirstChild().getQualifiedName();
+                                }
+
+                                if (child.getSecondChild() != null) {
+                                    rightOp = child.getSecondChild().getQualifiedName();
+                                }
+
+                                assignedVars.put(leftOp, rightOp);
+                                decideVulnerable(geChild, leftOp);
+                                decideVulnerable(geChild, rightOp);
+                            }
                         }
-
-                        if (child.getSecondChild() != null) {
-                            rightOp = child.getSecondChild().getQualifiedName();
-                        }
-
-                        assignedVars.put(leftOp, rightOp);
-                        decideVulnerable(geChild, leftOp);
-                        decideVulnerable(geChild, rightOp);
-
-
                     }
+
                     break;
                 case DEC:
                 case INC:
@@ -172,18 +180,18 @@ public class Main {
 
                     }
                     break;
-                case EXPR_RESULT:
                 case CALL:
                 case WHILE:
                 case FOR_OF:
-                    System.out.println(child);
-                    break;
                 case FOR:
-                    if (child != null) {
+                    if (child.children() != null) {
                         for (Node node : child.children()) {
-                            iterateScript(node);
-                            String name1 = node.getQualifiedName();
-                            decideVulnerable(node, name1);
+                            if (node != null) {
+                                iterateScript(node);
+                                String name1 = node.getQualifiedName();
+                                decideVulnerable(node, name1);
+
+                            }
                         }
                     }
                     break;
@@ -205,11 +213,15 @@ public class Main {
                 case FUNCTION:
                 case RETURN:
                 case EXPORT:
+                case NUMBER:
+                case STRING:
+                case CONST:
                 case NEW:
                 case TRY:
                 case ENUM:
                 case NULL:
                 case PIPE:
+                case EXPR_RESULT:
                 case THIS:
                 case TRUE:
                 case FALSE:
@@ -224,10 +236,85 @@ public class Main {
                 case ANY_TYPE:
                 case CLASS_MEMBERS:
                 case MODULE_BODY:
-                default:
-                    for(Node node : child.children()){
-                        iterateScript(node);
+                case SHEQ:
+                case DELPROP:
+                case HOOK:
+                case SHNE:
+                case ARRAYLIT:
+                case GETELEM:
+                case STRING_KEY:
+                case STRING_TYPE:
+                case TYPEOF:
+                case REGEXP:
+                case ANNOTATION:
+                case BANG:
+                case ROOT:
+                case BREAK:
+                case DEBUGGER:
+                case ELLIPSIS:
+                case EOC:
+                case EQUALS:
+                case LB:
+                case LC:
+                case STAR:
+                case TEMPLATELIT:
+                case YIELD:
+                case EMPTY:
+                case IMPORT_STAR:
+                case LABEL_NAME:
+                case MEMBER_VARIABLE_DEF:
+                case BITNOT:
+                case CALL_SIGNATURE:
+                case CAST:
+                case GETTER_DEF:
+                case INDEX_SIGNATURE:
+                case MEMBER_FUNCTION_DEF:
+                case NAMED_TYPE:
+                case NEG:
+                case POS:
+                case REST:
+                case SETTER_DEF:
+                case SPREAD:
+                case TEMPLATELIT_SUB:
+                case THROW:
+                case TYPE_ALIAS:
+                case VOID:
+                case ASSIGN_ADD:
+                case ASSIGN_BITAND:
+                case ASSIGN_BITOR:
+                case ASSIGN_BITXOR:
+                case ASSIGN_DIV:
+                case ASSIGN_LSH:
+                case ASSIGN_MOD:
+                case ASSIGN_MUL:
+                case ASSIGN_EXPONENT:
+                case ASSIGN_RSH:
+                case ASSIGN_SUB:
+                case ASSIGN_URSH:
+                case BITAND:
+                case BITOR:
+                case CASE:
+                case CATCH:
+                case COMPUTED_PROP:
+                case DEFAULT_VALUE:
+                case EXPONENT:
+                case LABEL:
+                case LSH:
+                case NAMESPACE:
+                case RSH:
+                case TAGGED_TEMPLATELIT:
+                case URSH:
+                case WITH:
+                case CLASS:
+                case IMPORT:
+                case INTERFACE:
+                    for (Node node : child.children()) {
+                        if (node != null) {
+                            iterateScript(node);
+                        }
+                        decideVulnerable(node,node.getQualifiedName());
                     }
+                default:
                     break;
 
             }
@@ -251,6 +338,7 @@ public class Main {
 
         if (params.contains(mappedVarValue) || params.contains(varName)) {
             output = description + file + func + lineNo + "\n";
+            System.out.println(output);
             writeOutput(output);
 
         }

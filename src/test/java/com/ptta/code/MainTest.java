@@ -6,9 +6,10 @@ import org.junit.Test;
 
 public class MainTest {
 
+    //418 and 419 correct
     //String file = "src/test/resources/useragent.js";
 
-    //TODO for each in parseheader.js does not work
+    //identifies but many are wrong
     //String file = "src/test/resources/parseheader.js";
 
     //identifes 2 case of array.length
@@ -17,13 +18,14 @@ public class MainTest {
     //TODO check does not identify anything
     //String file = "src/test/resources/glmatrix.js";
 
-    //TODO does not identify anything
+    //TODO Identifies wrong ones
     //String file = "src/test/resources/httpheaders.js";
 
-    //
+
+    //TODO does not identify anything
     String file = "src/test/resources/react-metrics-graphics.js";
     @Test
-    public void hasForLoop() throws Exception{
+    public void testVulnerabilities() throws Exception{
         Main.readScriptFile(file);
     }
 }
