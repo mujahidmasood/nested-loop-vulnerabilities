@@ -6,6 +6,7 @@ import com.google.javascript.rhino.Node;
 
 import java.nio.file.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 //TODO test on node module(npm userAgent, httpHeaderParsing npm module).
 //TODO Identify anonymous functions
@@ -25,6 +26,7 @@ public class Main {
     private static Map<String, String> assignedVars;
     private static Node function = null;
     private static List<String> params = null;
+    static List<String> variables = null;
 
 
     public static Compiler init() {
@@ -34,6 +36,7 @@ public class Main {
         options.setCodingConvention(new GoogleCodingConvention());
         compiler.initOptions(options);
         assignedVars = new HashMap<>();
+        variables = new ArrayList<>();
         return compiler;
     }
 
@@ -68,10 +71,22 @@ public class Main {
                 }
             }
         }
+
+        decideVulnerable();
+    }
+
+    private static void decideVulnerable() throws Exception {
+        List list = variables.stream().distinct().collect(Collectors.toList());
+        //list.sort(Comparator.naturalOrder());
+        for (Object var : list) {
+            if (assignedVars.containsKey(var)) {
+                writeOutput(assignedVars.get(var));
+            }
+        }
+
     }
 
     public static void iterateScript(Node child) throws Exception {
-        System.out.println(child);
         if (child.getToken() != null) {
             switch (child.getToken()) {
                 case BLOCK:
@@ -80,7 +95,11 @@ public class Main {
                             if (block != null) {
                                 iterateScript(block);
                                 if (block.getFirstChild() != null && block.getFirstChild().getQualifiedName() != null) {
-                                    decideVulnerable(block, block.getFirstChild().getQualifiedName());
+                                    String node_name =  block.getFirstChild().getQualifiedName();
+                                    if (checkVulnerable(node_name)) {
+                                        variables.add(node_name);
+                                        assignedVars.put(node_name,getOutput(child));
+                                    }
                                 }
                             }
                         }
@@ -99,6 +118,7 @@ public class Main {
                                 assignedVar = child.getFirstChild().getQualifiedName();
                             }
 
+
                             if (child.getFirstChild().getFirstChild() != null) {
                                 if (child.getFirstChild().getFirstChild().isGetProp()) {
                                     mappedVar = child.getFirstChild().getFirstChild().getFirstChild().getQualifiedName();
@@ -110,11 +130,18 @@ public class Main {
                             }
 
                             if (assignedVar != null && mappedVar != null) {
-                                assignedVars.put(assignedVar, mappedVar);
-                            }
+                                if (checkVulnerable(mappedVar)) {
+                                    variables.add(mappedVar);
+                                }
 
-                            decideVulnerable(var, mappedVar);
-                            decideVulnerable(var, assignedVar);
+                                if (checkVulnerable(assignedVar)) {
+                                    variables.add(assignedVar);
+                                }
+
+                                assignedVars.put(assignedVar, getOutput(var));
+                                assignedVars.put(mappedVar, getOutput(var));
+
+                            }
 
 
                         }
@@ -122,14 +149,17 @@ public class Main {
                     }
 
                     break;
-
+                case STRING:
                 case NAME:
                     if (!child.getParent().isParamList()) {
-                        decideVulnerable(child, child.getQualifiedName());
+                        String qualifiedName = child.getQualifiedName();
+                        if (checkVulnerable(qualifiedName)) {
+                            variables.add(qualifiedName);
+                            assignedVars.putIfAbsent(qualifiedName, getOutput(child));
+                        }
                     }
                     break;
-                case IF:
-                case OR:
+
                 case BITXOR:
                 case AND:
                 case EQ:
@@ -147,11 +177,13 @@ public class Main {
                 case COLON:
                 case COMMA:
                 case SUB:
+                case OR:
                 case ASSIGN:
                     if (child != null && child.children() != null) {
                         for (Node geChild : child.children()) {
                             if (geChild != null) {
                                 iterateScript(geChild);
+
                                 String leftOp = "";
                                 String rightOp = "";
 
@@ -163,9 +195,15 @@ public class Main {
                                     rightOp = child.getSecondChild().getQualifiedName();
                                 }
 
-                                assignedVars.put(leftOp, rightOp);
-                                decideVulnerable(geChild, leftOp);
-                                decideVulnerable(geChild, rightOp);
+                                if (checkVulnerable(rightOp)) {
+                                    variables.add(rightOp);
+                                    assignedVars.put(rightOp, getOutput(geChild));
+                                }
+
+                                if (checkVulnerable(leftOp)) {
+                                    variables.add(leftOp);
+                                    assignedVars.put(leftOp, getOutput(geChild));
+                                }
                             }
                         }
                     }
@@ -174,12 +212,6 @@ public class Main {
                 case DEC:
                 case INC:
                 case NOT:
-                    for (Node incChild : child.children()) {
-                        String unaryOp = incChild.getQualifiedName();
-                        decideVulnerable(incChild, unaryOp);
-
-                    }
-                    break;
                 case CALL:
                 case WHILE:
                 case FOR_OF:
@@ -189,9 +221,12 @@ public class Main {
                             if (node != null) {
                                 iterateScript(node);
                                 String name1 = node.getQualifiedName();
-                                decideVulnerable(node, name1);
-
+                                if (checkVulnerable(name1)) {
+                                    variables.add(name1);
+                                    assignedVars.put(name1, getOutput(node));
+                                }
                             }
+
                         }
                     }
                     break;
@@ -203,18 +238,22 @@ public class Main {
                         }
                         if (child.getSecondChild() != null && child.getSecondChild().getQualifiedName() != null) {
                             String param = child.getSecondChild().getQualifiedName();
-                            assignedVars.put(param, param);
-                            decideVulnerable(for_in, param);
+                            if (checkVulnerable(param)) {
+                                variables.add(param);
+                                assignedVars.put(param, getOutput(for_in));
+                            }
                         }
                     }
                     break;
+                case IF:
+                case TRUE:
+                case FALSE:
                 case PARAM_LIST:
                 case GETPROP:
                 case FUNCTION:
                 case RETURN:
                 case EXPORT:
                 case NUMBER:
-                case STRING:
                 case CONST:
                 case NEW:
                 case TRY:
@@ -223,8 +262,6 @@ public class Main {
                 case PIPE:
                 case EXPR_RESULT:
                 case THIS:
-                case TRUE:
-                case FALSE:
                 case INSTANCEOF:
                 case OBJECTLIT:
                 case OBJECT_PATTERN:
@@ -304,17 +341,17 @@ public class Main {
                 case RSH:
                 case TAGGED_TEMPLATELIT:
                 case URSH:
+                case LET:
                 case WITH:
                 case CLASS:
                 case IMPORT:
                 case INTERFACE:
+                default:
                     for (Node node : child.children()) {
                         if (node != null) {
                             iterateScript(node);
                         }
-                        decideVulnerable(node,node.getQualifiedName());
                     }
-                default:
                     break;
 
             }
@@ -322,6 +359,22 @@ public class Main {
 
     }
 
+    private static String getOutput(Node child) {
+
+        String functionName = function.getFirstChild().getQualifiedName();
+
+
+        String file = function.getSourceFileName();
+        String lineNo = " lineNo: " + child.getLineno();
+        String func = " function: " + functionName;
+        String output = file + func + lineNo + "\n";
+
+        return output;
+    }
+
+    private static boolean checkVulnerable(String name) {
+        return params.contains(name);
+    }
 
     private static void decideVulnerable(Node child, String varName) throws Exception {
 
