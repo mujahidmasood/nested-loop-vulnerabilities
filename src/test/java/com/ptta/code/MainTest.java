@@ -7,7 +7,7 @@ import org.junit.Test;
 public class MainTest {
 
     //418 and 419 correct
-    String file = "src/test/resources/index.js";
+    //String file = "src/test/resources/index.js";
 
     //identifies but many are wrong
     //String file = "src/test/resources/parseheader.js";
@@ -24,6 +24,9 @@ public class MainTest {
 
     //TODO does not identify anything
     //String file = "src/test/resources/react-metrics-graphics.js";
+
+    //TODO userAgent
+    String file = "src/test/resources/useragent.js";
     @Test
     public void testVulnerabilities() throws Exception{
         Main.readScriptFile(file);

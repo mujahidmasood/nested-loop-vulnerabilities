@@ -1,5 +1,0 @@
-src/test/resources/index.js function: isSafe lineNo: 5
-src/test/resources/index.js function: whileLoop lineNo: 60
-src/test/resources/index.js function: arrayLength lineNo: 29
-src/test/resources/index.js function: loopWithVarAssignemnt lineNo: 39
-src/test/resources/index.js function: forInLoop lineNo: 69
