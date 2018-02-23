@@ -312,7 +312,7 @@ public class Main {
                         if (node != null) {
                             iterateScript(node);
                         }
-                        decideVulnerable(node,node.getQualifiedName());
+                        decideVulnerable(node, node.getQualifiedName());
                     }
                 default:
                     break;
@@ -350,4 +350,35 @@ public class Main {
         Files.write(path, output.getBytes(), StandardOpenOption.APPEND);
     }
 
+    public static void main(String[] args) {
+
+        String file = "src/test/resources/index.js";
+
+        //identifies but many are wrong
+        //String file = "src/test/resources/parseheader.js";
+
+        //identifes 2 case of array.length
+        //String file = "src/test/resources/clientsessions.js";
+
+        //String file = "src/test/resources/glmatrix.js";
+
+        //String file = "src/test/resources/httpheaders.js";
+
+
+        //String file = "src/test/resources/react-metrics-graphics.js";
+
+        //String file = "src/test/resources/dash.js";
+
+        //418 and 419 correct
+        //String file = "src/test/resources/agent.js";
+
+        try{
+            readScriptFile(file);
+        }catch (Exception e){
+            System.out.println(e.getCause());
+            e.printStackTrace();
+        }
+
+
+    }
 }
