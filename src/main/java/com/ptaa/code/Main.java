@@ -352,7 +352,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        String file = "src/test/resources/index.js";
+        String file = "src/test/resources/agent.js";
 
         //identifies but many are wrong
         //String file = "src/test/resources/parseheader.js";
