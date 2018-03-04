@@ -1,0 +1,5 @@
+src/test/resources/performance.js
+------------------------------------------------
+tripleLoop                                         5
+tripleLoop                                         6
+tripleLoop                                         7
