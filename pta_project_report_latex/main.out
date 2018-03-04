@@ -6,3 +6,12 @@
 \BOOKMARK [3][-]{subsubsection.4.1.1}{Problems with Approach 1}{subsection.4.1}% 6
 \BOOKMARK [2][-]{subsection.4.2}{Approach 2 : Changing the logic}{section.4}% 7
 \BOOKMARK [3][-]{subsubsection.4.2.1}{Problems with Approach 2}{subsection.4.2}% 8
+\BOOKMARK [1][-]{section.5}{Our Approach}{}% 9
+\BOOKMARK [2][-]{subsection.5.1}{High Level Steps}{section.5}% 10
+\BOOKMARK [2][-]{subsection.5.2}{Implementation Technologies}{section.5}% 11
+\BOOKMARK [2][-]{subsection.5.3}{Detailed Steps}{section.5}% 12
+\BOOKMARK [2][-]{subsection.5.4}{Project Structure}{section.5}% 13
+\BOOKMARK [1][-]{section.6}{Results}{}% 14
+\BOOKMARK [2][-]{subsection.6.1}{Manual Tests}{section.6}% 15
+\BOOKMARK [3][-]{subsubsection.6.1.1}{Validation of claim}{subsection.6.1}% 16
+\BOOKMARK [1][-]{section.7}{Analysing Node modules}{}% 17
