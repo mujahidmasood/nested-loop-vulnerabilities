@@ -1,0 +1,255 @@
+%-----------------------------------------------------------------------------
+% Template for seminar 'Program Analysis' at TU Darmstadt.
+%
+% Adapted from template for sigplanconf LaTeX Class, which is a LaTeX 2e
+% class file for SIGPLAN conference proceedings (by Paul C.
+% Anagnostopoulos).
+%
+%-----------------------------------------------------------------------------
+
+
+\documentclass[authoryear,preprint]{sigplanconf}
+
+% A couple of packages that may be useful
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{algorithm2e}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{booktabs}
+\usepackage{subfigure}
+\usepackage[english]{babel}
+\usepackage{blindtext}
+\usetikzlibrary{shapes.geometric, arrows,chains}
+
+\begin{document}
+
+\special{papersize=a4}
+\setlength{\pdfpageheight}{\paperheight}
+\setlength{\pdfpagewidth}{\paperwidth}
+
+
+\title{Identifying Algorithmic Complexity Vulnerabilities Caused by
+Input-Dependent Nested Loops}
+
+\authorinfo{Mujahid Masood,Rafique Nazir}{mujahid.masood@stud.tu-darmstadt.de,rafique.nazir@stud.tu-darmstadt.de}{}
+\maketitle
+
+\begin{abstract}
+The single-threaded event model of JavaScript makes it vulnerable to a specific class of denial of
+service attack called algorithmic complexity attacks. These attacks consist of exploiting the worst
+case performance of algorithms to trigger slow computations that block the event loop for a large
+period of time. In this project we study the prevalence of a particular class of algorithmic complexity
+vulnerabilities called input-dependent nested loops.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:introduction}
+\subsection{Motivation}
+\label{subsec:motivation}
+Loops are the very important programming construct.If a function uses a loop,depending upon the number of  iterations of the loop;a significant amount of execution time of a function, is used by a loop.For example
+in listing \ref{l:listings} ,total execution time of 10 iterations of a nested loop is approximately 35 milliseconds.In simpleLoop function,number of iteration is controlled by the variable length,which is initially set to 10.If variable length's value is changed from 10 to 100,loop execution time changes significantly from 35 milliseconds to 3.5 seconds,which is 100 times of the original execution time.
+\lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt}
+\lstset{basicstyle=\ttfamily}
+\lstset{frame=tb}
+
+\begin{lstlisting}[caption=Simple nested loop,label=l:listings,language=Java]
+function simpleLoop() {
+	
+	var length=10;
+
+     for (var i = 0; i <length;i++) {
+
+      for (var j=0;j <length;j++) {
+   	console.log(i,j);
+      }
+    }
+ 
+}
+\end{lstlisting}
+
+In some cases,variables controlling the loop iteration, are also passed to a function as a parameter as shown in listing  \ref{2:listings}.We pass a parameter named array to function selectionSort,which is used by two nested loops inside the function.These kind of  input dependent loops are prone to attacks.For example,If an attacker controls the input of the function selectionSort in listing \ref{2:listings} he or she  can increase the overall execution time of the function.In our example,if we pass an array of size 200 to selectionSort its execution time is approximately 5 seconds.\\
+
+\lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt}
+\lstset{basicstyle=\ttfamily}
+\lstset{frame=tb}
+
+\begin{lstlisting}[caption=Quadratic complexity algorithm for computing a repetitive sum,label=2:listings,language=Java]
+function selectionSort(array) {
+ for (var i = -1; ++i < array.length;)
+     {
+     for (var m = j = i; ++j < array.length;) 
+     {
+       if (array[m] > array[j])
+          m = j;
+        }
+
+        var temp = array[m];
+        array[m] = array[i];
+        array[i] = temp;
+    }
+    return array;
+}
+\end{lstlisting}
+
+
+\section{Problems Of Using  Function Input Dependent Loops  }
+\label{sec:problems-of-using-loops}
+Most of the npm modules use  function input dependent loops and they are deployed in the production environments. For example  useragent,dash and react-metric-graphics are the few npm  modules which use function input parameters in loops.An attacker can easily exploit function input dependent loop vulnerabilities for ReDos attacks.\\
+
+In our project we perform static analysis on the npm modules using the \textit{Google Closure Compiler} to identify the function input dependent loop vulnerabilities in the npm modules. \\
+\begin{figure}
+\centering
+\tikzstyle{decision} = [diamond, draw, fill=blue!20,
+    text width=4.5em, text badly centered, node distance=2.5cm, inner sep=0pt]
+\tikzstyle{block} = [rectangle, draw, fill=blue!20,
+    text width=5em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{line} = [draw, very thick, color=black!50, -latex']
+\tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=2.5cm,
+    minimum height=2em]
+
+\begin{tikzpicture}[scale=2, node distance = 2cm, auto]
+    % Place nodes
+    \node [block] (googleClosureCompiler) {Google Closure Compiler};
+    \node [cloud, left of=googleClosureCompiler] (inputFiles) {Input: .js files };
+    \node [block, below of=googleClosureCompiler] (identifyFunctions) {Indentify Functions};
+    \node [block, below of=identifyFunctions] (identifyLoops) {Identify Loops};
+    \node [decision, below of=identifyLoops] (isLoopVulnerable) {is loop vulnerable?};
+    \node [block, below of=isLoopVulnerable, node distance=2.5cm] (outputFile) {write to output file};
+    
+    % Draw edges
+ 
+    \path [line] (googleClosureCompiler) -- (identifyFunctions);
+    \path [line] (identifyFunctions) -- (identifyLoops);
+    \path [line] (identifyLoops) -- (isLoopVulnerable);
+    \path [line] (isLoopVulnerable) -- node [near start, color=black] {yes} (outputFile);
+    \tikzstyle{no}=[near end,color=black]
+    \path [line] (isLoopVulnerable) -- node  {no} (identifyFunctions);
+\end{tikzpicture}
+\caption{Workflow for indentifying function input dependent loops in npm modules } \label{fig:workflow}
+\end{figure}
+
+
+
+
+\section{Our Approach}
+\label{sec:our-approach}
+
+\section{Future Work}
+How to automatically verify the correctness of the identified vulnerabilities
+\label{sec:our-approach}
+\subsection{Citations}
+
+Use citations to refer to other 
+papers~\cite{HerlihyMoss1993-TransactionalMemory,FraserHanson1992-CodeGenerator} 
+and books~\cite{Strunk-ElementsOfStyle,Aho86-Compilers}.
+
+
+\subsection{Tables}
+
+Table~\ref{t:Translations} shows how a table looks like.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{ll}
+\hline
+\textbf{English} & \textbf{German}\\
+\hline
+cell phone       & Handy\\
+Diet Coke        & Coca Cola light\\
+\hline
+\end{tabular}
+\caption[Translations]{\label{t:Translations}Translations.}
+\end{table}
+
+\subsection{Figures}
+
+Figure~\ref{f:SOLAlogo} shows a simple figure with a single picture
+and Figure~\ref{f:SubfigureExample} shows a more complex figure
+containing subfigures.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=.6\linewidth]{figures/SOLALogo}
+\caption[SOLA logo]{\label{f:SOLAlogo}SOLA logo.}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\subfigure[TUDaLogo]{\includegraphics[height=12mm]{figures/TUDaLogo}}\quad
+\subfigure[SOLALogo]{\includegraphics[height=12mm]{figures/SOLALogo}}
+\caption[Subfigure example]{\label{f:SubfigureExample}Two pictures as
+  part of a single figure through the magic of the subfigure package.}
+\end{figure}
+
+
+\subsection{Source code}
+
+The listings package provides tools to typeset source code
+listings. It supports many programming languages and provides a lot of
+formatting options.
+
+\lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt}
+\lstset{basicstyle=\ttfamily}
+\lstset{frame=tb}
+
+\begin{lstlisting}[float,caption=Example usage of the listing package,label=l:javaClass,language=Java]
+class S {
+   int f1 = 42;
+   public S(int x) {
+          f1 = x;
+   }
+}
+\end{lstlisting}
+
+Listing \ref{l:javaClass} shows an example listing. Code snippets can
+also be inserted in normal text:
+\verb$\lstinline|int f1 = 42;|$ gives \lstinline$int f1 = 42;$
+
+
+\subsection{Miscellany}
+
+\begin{description}
+
+\item[Capitalization.] When referring to a named table (such as in the
+  previous section), the word \emph{table} is capitalized. The same is
+  true for figures, chapters and sections.
+
+\item[Bibliography.] Use \verb|bibtex| to make your life easier and to
+  produce consistently formatted entries.
+
+\item[Contractions.] Avoid contractions. For instance, use ``do not''
+  rather than ``don't.''
+
+\item[Style guide.] A classic reference book on writing style is
+  Strunk's \emph{The Elements of Style} \cite{Strunk-ElementsOfStyle}.
+
+\end{description}
+
+
+\section{Limitations}
+
+\blindtext % replace this with your own text
+
+
+\section{Results}
+
+\blindtext % replace this with your own text
+
+
+\section{Conclusion}
+
+\blindtext % replace this with your own text
+
+\bibliographystyle{abbrvnat}
+\bibliography{references}
+
+
+\bibliographystyle{abbrvnat}
+
+
+
+\end{document}
