@@ -7,16 +7,6 @@ import com.google.javascript.rhino.Node;
 import java.nio.file.*;
 import java.util.*;
 
-//TODO test on node module(npm userAgent, httpHeaderParsing npm module).
-//TODO Identify anonymous functions
-//TODO reduce number of wrongly identified vulnerabilities
-//TODO array.length or string.length used in loop
-//TODO identify function, figure out how to run
-//TODO function call
-//TODO Array argument
-//TODO Array for each
-
-
 public class Main {
 
     private static Compiler compiler;
@@ -24,7 +14,8 @@ public class Main {
     private static SourceFile sourceFile;
     private static Map<String, String> assignedVars;
     private static Node function = null;
-    private static List<String> params = null;
+    private static List<String> params ;
+    private static Map<Integer,String> vulnerabilitesMap;
 
 
     public static Compiler init() {
@@ -33,7 +24,11 @@ public class Main {
         options.setLanguage(CompilerOptions.LanguageMode.ECMASCRIPT_2015);
         options.setCodingConvention(new GoogleCodingConvention());
         compiler.initOptions(options);
+
         assignedVars = new HashMap<>();
+        params = new ArrayList<>();
+        vulnerabilitesMap = new TreeMap<>();
+
         return compiler;
     }
 
@@ -43,53 +38,45 @@ public class Main {
             compiler = init();
         }
 
-        Node node = compiler.parse(sourceFile);
-        Iterable iterable = node.children();
-        Iterator iterator = iterable.iterator();
-        while (iterator.hasNext()) {
-            function = (Node) iterator.next();
-
-            Node paramList = function.getSecondChild();
-            params = new ArrayList<>();
-
-            if (paramList != null && paramList.children() != null) {
-                for (Node param : paramList.children()) {
-                    params.add(param.getQualifiedName());
+        try {
+            Node node = compiler.parse(sourceFile);
+            Iterable iterable = node.children();
+            Iterator iterator = iterable.iterator();
+            while (iterator.hasNext()) {
+                Node child = (Node) iterator.next();
+                if (child != null) {
+                    iterateScript(child);
                 }
             }
-
-            for (Node node1 : function.children()) {
-                Iterator iter = node1.children().iterator();
-                while (iter.hasNext()) {
-                    Node child = (Node) iter.next();
-                    if (child != null) {
-                        iterateScript(child);
-                    }
-                }
+        }finally {
+            String file_out = fileName + "\n";
+            file_out += "------------------------------------------------\n";
+            writeOutput(fileName,file_out);
+            for(String output : vulnerabilitesMap.values()){
+                writeOutput(fileName,output);
             }
         }
     }
 
     public static void iterateScript(Node child) throws Exception {
-        System.out.println(child);
+        if (child.isParamList()) {
+            for (Node param : child.children()) {
+                if (param != null) {
+                    params.add(param.getQualifiedName());
+                }
+            }
+        }
+        if (child.isFunction()) {
+            function = child;
+        }
+
         if (child.getToken() != null) {
             switch (child.getToken()) {
-                case BLOCK:
-                    if (child.children() != null) {
-                        for (Node block : child.children()) {
-                            if (block != null) {
-                                iterateScript(block);
-                                if (block.getFirstChild() != null && block.getFirstChild().getQualifiedName() != null) {
-                                    decideVulnerable(block, block.getFirstChild().getQualifiedName());
-                                }
-                            }
-                        }
-                    }
-                    break;
                 case VAR:
                     for (Node var : child.children()) {
-                        if (var.getFirstChild() != null) {
-                            iterateScript(var.getFirstChild());
+                        if (var != null) {
+                            System.out.println(var);
+                            iterateScript(var);
                         }
 
                         if (child.getFirstChild() != null) {
@@ -113,20 +100,15 @@ public class Main {
                                 assignedVars.put(assignedVar, mappedVar);
                             }
 
-                            decideVulnerable(var, mappedVar);
-                            decideVulnerable(var, assignedVar);
-
+                            if(checkLoop(child)) {
+                                decideVulnerable(var, mappedVar);
+                                decideVulnerable(var, assignedVar);
+                            }
 
                         }
 
                     }
 
-                    break;
-
-                case NAME:
-                    if (!child.getParent().isParamList()) {
-                        decideVulnerable(child, child.getQualifiedName());
-                    }
                     break;
                 case IF:
                 case OR:
@@ -147,11 +129,9 @@ public class Main {
                 case COLON:
                 case COMMA:
                 case SUB:
-                case ASSIGN:
                     if (child != null && child.children() != null) {
                         for (Node geChild : child.children()) {
                             if (geChild != null) {
-                                iterateScript(geChild);
                                 String leftOp = "";
                                 String rightOp = "";
 
@@ -164,10 +144,14 @@ public class Main {
                                 }
 
                                 assignedVars.put(leftOp, rightOp);
-                                decideVulnerable(geChild, leftOp);
-                                decideVulnerable(geChild, rightOp);
+                                if(checkLoop(child)) {
+                                    decideVulnerable(geChild, leftOp);
+                                    decideVulnerable(geChild, rightOp);
+                                }
                             }
+                            iterateScript(geChild);
                         }
+
                     }
 
                     break;
@@ -176,145 +160,25 @@ public class Main {
                 case NOT:
                     for (Node incChild : child.children()) {
                         String unaryOp = incChild.getQualifiedName();
-                        decideVulnerable(incChild, unaryOp);
-
-                    }
-                    break;
-                case CALL:
-                case WHILE:
-                case FOR_OF:
-                case FOR:
-                    if (child.children() != null) {
-                        for (Node node : child.children()) {
-                            if (node != null) {
-                                iterateScript(node);
-                                String name1 = node.getQualifiedName();
-                                decideVulnerable(node, name1);
-
-                            }
+                        assignedVars.put(unaryOp, unaryOp);
+                        if(checkLoop(incChild)) {
+                            decideVulnerable(incChild, unaryOp);
                         }
                     }
                     break;
-
-                case FOR_IN:
-                    for (Node for_in : child.children()) {
-                        if (for_in != null) {
-                            iterateScript(for_in);
-                        }
-                        if (child.getSecondChild() != null && child.getSecondChild().getQualifiedName() != null) {
-                            String param = child.getSecondChild().getQualifiedName();
-                            assignedVars.put(param, param);
-                            decideVulnerable(for_in, param);
+                case NAME:
+                    if (!child.getParent().isParamList()) {
+                        if(child != null && child.getQualifiedName() != null){
+                            decideVulnerable(child, child.getQualifiedName());
                         }
                     }
                     break;
-                case PARAM_LIST:
-                case GETPROP:
-                case FUNCTION:
-                case RETURN:
-                case EXPORT:
-                case NUMBER:
-                case STRING:
-                case CONST:
-                case NEW:
-                case TRY:
-                case ENUM:
-                case NULL:
-                case PIPE:
-                case EXPR_RESULT:
-                case THIS:
-                case TRUE:
-                case FALSE:
-                case INSTANCEOF:
-                case OBJECTLIT:
-                case OBJECT_PATTERN:
-                case SCRIPT:
-                case UNDEFINED_TYPE:
-                case FUNCTION_TYPE:
-                case DO:
-                case IN:
-                case ANY_TYPE:
-                case CLASS_MEMBERS:
-                case MODULE_BODY:
-                case SHEQ:
-                case DELPROP:
-                case HOOK:
-                case SHNE:
-                case ARRAYLIT:
-                case GETELEM:
-                case STRING_KEY:
-                case STRING_TYPE:
-                case TYPEOF:
-                case REGEXP:
-                case ANNOTATION:
-                case BANG:
-                case ROOT:
-                case BREAK:
-                case DEBUGGER:
-                case ELLIPSIS:
-                case EOC:
-                case EQUALS:
-                case LB:
-                case LC:
-                case STAR:
-                case TEMPLATELIT:
-                case YIELD:
-                case EMPTY:
-                case IMPORT_STAR:
-                case LABEL_NAME:
-                case MEMBER_VARIABLE_DEF:
-                case BITNOT:
-                case CALL_SIGNATURE:
-                case CAST:
-                case GETTER_DEF:
-                case INDEX_SIGNATURE:
-                case MEMBER_FUNCTION_DEF:
-                case NAMED_TYPE:
-                case NEG:
-                case POS:
-                case REST:
-                case SETTER_DEF:
-                case SPREAD:
-                case TEMPLATELIT_SUB:
-                case THROW:
-                case TYPE_ALIAS:
-                case VOID:
-                case ASSIGN_ADD:
-                case ASSIGN_BITAND:
-                case ASSIGN_BITOR:
-                case ASSIGN_BITXOR:
-                case ASSIGN_DIV:
-                case ASSIGN_LSH:
-                case ASSIGN_MOD:
-                case ASSIGN_MUL:
-                case ASSIGN_EXPONENT:
-                case ASSIGN_RSH:
-                case ASSIGN_SUB:
-                case ASSIGN_URSH:
-                case BITAND:
-                case BITOR:
-                case CASE:
-                case CATCH:
-                case COMPUTED_PROP:
-                case DEFAULT_VALUE:
-                case EXPONENT:
-                case LABEL:
-                case LSH:
-                case NAMESPACE:
-                case RSH:
-                case TAGGED_TEMPLATELIT:
-                case URSH:
-                case WITH:
-                case CLASS:
-                case IMPORT:
-                case INTERFACE:
+                default:
                     for (Node node : child.children()) {
                         if (node != null) {
                             iterateScript(node);
                         }
-                        decideVulnerable(node, node.getQualifiedName());
                     }
-                default:
                     break;
 
             }
@@ -325,29 +189,41 @@ public class Main {
 
     private static void decideVulnerable(Node child, String varName) throws Exception {
 
-        String functionName = function.getFirstChild().getQualifiedName();
+        String functionName = "()";
+        String file = child.getSourceFileName();
+        if(function != null && function.getSecondChild() != null) {
+            functionName = function.getFirstChild().getQualifiedName();
+            file = function.getSourceFileName();
+        }
 
-
-        String file = function.getSourceFileName();
-        String description = "at file: ";
-        String lineNo = " lineNo: " + child.getLineno();
-        String func = " function: " + functionName;
+        int lineNo = child.getLineno();
+        String func =functionName;
         String output = "";
 
         String mappedVarValue = assignedVars.get(varName);
-
         if (params.contains(mappedVarValue) || params.contains(varName)) {
-            output = description + file + func + lineNo + "\n";
-            System.out.println(output);
-            writeOutput(output);
-
+                String formatted_output = String.format("%-50s %s", func, lineNo + "\n");
+                vulnerabilitesMap.putIfAbsent(lineNo,formatted_output);
         }
     }
 
+    private static boolean checkLoop(Node node) {
+        Node child = node.getParent();
+        return child.isForIn() || child.isForOf() || child.isWhile() || child.isVanillaFor();
+    }
 
-    public static void writeOutput(String output) throws Exception {
-        Path path = Paths.get("src/test/resources/output.txt");
+
+    public static void writeOutput(String inputFile, String output) throws Exception {
+        String file =  inputFile +"_output.txt";
+        Path path = Paths.get(file);
+        Files.createDirectories(path.getParent());
+        if(!Files.exists(path)) {
+            Files.createFile(path);
+        }
+
+
         Files.write(path, output.getBytes(), StandardOpenOption.APPEND);
+
     }
 
     public static void main(String[] args) {
@@ -372,9 +248,9 @@ public class Main {
         //418 and 419 correct
         //String file = "src/test/resources/agent.js";
 
-        try{
+        try {
             readScriptFile(file);
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e.getCause());
             e.printStackTrace();
         }
