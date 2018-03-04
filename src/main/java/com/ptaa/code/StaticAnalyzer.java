@@ -3,38 +3,24 @@ package com.ptaa.code;
 import com.google.javascript.jscomp.*;
 import com.google.javascript.jscomp.Compiler;
 import com.google.javascript.rhino.Node;
-import java.nio.file.*;
+
 import java.util.*;
 
-public class Main {
-
-    private static Compiler compiler;
+public class StaticAnalyzer {
 
     private static Map<String, String> assignedVars;
     private static Node function = null;
     private static List<String> params;
     private static Map<Integer, String> vulnerabilitesMap;
 
-
-    public static Compiler init() {
-        compiler = new Compiler();
-        CompilerOptions options = new CompilerOptions();
-        options.setLanguage(CompilerOptions.LanguageMode.ECMASCRIPT_2015);
-        options.setCodingConvention(new GoogleCodingConvention());
-        compiler.initOptions(options);
+    public static void readScriptFile(String fileName) throws Exception {
 
         assignedVars = new HashMap<>();
         params = new ArrayList<>();
         vulnerabilitesMap = new TreeMap<>();
 
-        return compiler;
-    }
-
-    public static void readScriptFile(String fileName) throws Exception {
         SourceFile sourceFile = SourceFile.fromFile(fileName);
-        if (compiler == null) {
-            compiler = init();
-        }
+        Compiler compiler = ClosureEngine.init();
 
         try {
             Node node = compiler.parse(sourceFile);
@@ -47,16 +33,11 @@ public class Main {
                 }
             }
         } finally {
-            String file_out = fileName + "\n";
-            file_out += "------------------------------------------------\n";
-            writeOutput(fileName, file_out);
-            for (String output : vulnerabilitesMap.values()) {
-                writeOutput(fileName, output);
-            }
+
+            OutputWriter.write(fileName,vulnerabilitesMap);
             vulnerabilitesMap.clear();
             assignedVars.clear();
             params.clear();
-            compiler = null;
             function = null;
         }
     }
@@ -209,45 +190,5 @@ public class Main {
     private static boolean checkLoop(Node node) {
         Node child = node.getParent();
         return child.isForIn() || child.isForOf() || child.isWhile() || child.isVanillaFor();
-    }
-
-
-    public static void writeOutput(String inputFile, String output) throws Exception {
-        String file = inputFile + "_output.txt";
-        Path path = Paths.get(file);
-        Files.createDirectories(path.getParent());
-        if (!Files.exists(path)) {
-            Files.createFile(path);
-        }
-
-
-        Files.write(path, output.getBytes(), StandardOpenOption.APPEND);
-
-    }
-
-    public static void main(String[] args) {
-
-        String modules_path = "/home/mujahidmasood/Masters/DSS/Semester5/PTAA/nested-loop-vulnerabilities/node_modules";
-        try {
-            Files.walk(Paths.get(modules_path))
-                    .filter(Files::isRegularFile)
-                    .filter(path -> !Files.isDirectory(path))
-                    .filter(file -> file.toString().endsWith(".js"))
-                    .forEach(path -> {
-                        try {
-                            System.out.println(path.toString());
-                            readScriptFile(path.toString());
-                        } catch (Exception e) {
-                            System.out.println(e.getMessage());
-                            e.printStackTrace();
-                        }
-                    });
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
-
-
     }
 }
