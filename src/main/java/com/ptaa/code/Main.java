@@ -75,7 +75,6 @@ public class Main {
                 case VAR:
                     for (Node var : child.children()) {
                         if (var != null) {
-                            System.out.println(var);
                             iterateScript(var);
                         }
 
@@ -190,15 +189,12 @@ public class Main {
     private static void decideVulnerable(Node child, String varName) throws Exception {
 
         String functionName = "()";
-        String file = child.getSourceFileName();
         if(function != null && function.getSecondChild() != null) {
             functionName = function.getFirstChild().getQualifiedName();
-            file = function.getSourceFileName();
         }
 
         int lineNo = child.getLineno();
         String func =functionName;
-        String output = "";
 
         String mappedVarValue = assignedVars.get(varName);
         if (params.contains(mappedVarValue) || params.contains(varName)) {
@@ -230,31 +226,11 @@ public class Main {
 
         String file = "src/test/resources/agent.js";
 
-        //identifies but many are wrong
-        //String file = "src/test/resources/parseheader.js";
-
-        //identifes 2 case of array.length
-        //String file = "src/test/resources/clientsessions.js";
-
-        //String file = "src/test/resources/glmatrix.js";
-
-        //String file = "src/test/resources/httpheaders.js";
-
-
-        //String file = "src/test/resources/react-metrics-graphics.js";
-
-        //String file = "src/test/resources/dash.js";
-
-        //418 and 419 correct
-        //String file = "src/test/resources/agent.js";
-
         try {
             readScriptFile(file);
         } catch (Exception e) {
             System.out.println(e.getCause());
             e.printStackTrace();
         }
-
-
     }
 }

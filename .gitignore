@@ -1,6 +1,7 @@
 
-.gitignore
+
 .idea/
 nested-loop-vulnerabilities.iml
 target/
 node_modules/.bin/
+
