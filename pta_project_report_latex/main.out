@@ -1,0 +1,8 @@
+\BOOKMARK [1][-]{section.1}{Problem Statement}{}% 1
+\BOOKMARK [1][-]{section.2}{Input dependent loops and execution time}{}% 2
+\BOOKMARK [1][-]{section.3}{Problems with using loops depending on function input parameters}{}% 3
+\BOOKMARK [1][-]{section.4}{Avoiding the problem}{}% 4
+\BOOKMARK [2][-]{subsection.4.1}{Approach 1 : Introduce Upper bound on input parameters}{section.4}% 5
+\BOOKMARK [3][-]{subsubsection.4.1.1}{Problems with Approach 1}{subsection.4.1}% 6
+\BOOKMARK [2][-]{subsection.4.2}{Approach 2 : Changing the logic}{section.4}% 7
+\BOOKMARK [3][-]{subsubsection.4.2.1}{Problems with Approach 2}{subsection.4.2}% 8

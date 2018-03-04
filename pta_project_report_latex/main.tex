@@ -1,16 +1,5 @@
-%-----------------------------------------------------------------------------
-% Template for seminar 'Program Analysis' at TU Darmstadt.
-%
-% Adapted from template for sigplanconf LaTeX Class, which is a LaTeX 2e
-% class file for SIGPLAN conference proceedings (by Paul C.
-% Anagnostopoulos).
-%
-%-----------------------------------------------------------------------------
-
-
 \documentclass[authoryear,preprint]{sigplanconf}
 
-% A couple of packages that may be useful
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
@@ -24,6 +13,35 @@
 \usepackage[english]{babel}
 \usepackage{blindtext}
 \usetikzlibrary{shapes.geometric, arrows,chains}
+\bibliographystyle{abbrvnat}
+\usepackage{url}
+\usepackage{hyperref}
+
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\usepackage{enumitem}
+\newlist{steps}{enumerate}{1}
+\setlist[steps, 1]{label = Step \arabic*:}
+
+\lstset{frame=tb,
+  language=Java,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
 
 \begin{document}
 
@@ -38,218 +56,183 @@ Input-Dependent Nested Loops}
 \authorinfo{Mujahid Masood,Rafique Nazir}{mujahid.masood@stud.tu-darmstadt.de,rafique.nazir@stud.tu-darmstadt.de}{}
 \maketitle
 
-\begin{abstract}
-The single-threaded event model of JavaScript makes it vulnerable to a specific class of denial of
-service attack called algorithmic complexity attacks. These attacks consist of exploiting the worst
-case performance of algorithms to trigger slow computations that block the event loop for a large
-period of time. In this project we study the prevalence of a particular class of algorithmic complexity
-vulnerabilities called input-dependent nested loops.
-\end{abstract}
+\section{Problem Statement}
+\label{sec:problemstatement}
 
-\section{Introduction}
+The single-threaded event model of JavaScript makes it vulnerable
+to a specific class of denial of service attack called algorithmic
+complexity attacks. These attacks consist of exploiting the worst
+case performance of algorithms to trigger slow computations that
+block the event loop for a large period of time. The focus of this
+project is to
+\begin{itemize}
+\item Identify the functions in code.
+\item Identify the input parameters to the functions.
+\item Identify the loops using input parameters of functions.
+\item Impact of using function input parameters with loops in terms
+of execution time as well as denial of service attack.
+\end{itemize}
+
+
+\section{Input dependent loops and execution time}
 \label{sec:introduction}
-\subsection{Motivation}
-\label{subsec:motivation}
-Loops are the very important programming construct.If a function uses a loop,depending upon the number of  iterations of the loop;a significant amount of execution time of a function, is used by a loop.For example
-in listing \ref{l:listings} ,total execution time of 10 iterations of a nested loop is approximately 35 milliseconds.In simpleLoop function,number of iteration is controlled by the variable length,which is initially set to 10.If variable length's value is changed from 10 to 100,loop execution time changes significantly from 35 milliseconds to 3.5 seconds,which is 100 times of the original execution time.
-\lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt}
-\lstset{basicstyle=\ttfamily}
-\lstset{frame=tb}
+Execution time of the functions is really important to write scalable applications. In normal application overall execution time of function depend on the slowest function.
 
-\begin{lstlisting}[caption=Simple nested loop,label=l:listings,language=Java]
-function simpleLoop() {
-	
-	var length=10;
+Consider the code in Listing \ref{l:iterate} we have iterate function which has max as input parameter, it has one loop which is iterating up till max.
 
-     for (var i = 0; i <length;i++) {
+So caller of function can pass input of \begin{math} 10_{10} \end{math} and execution time of simple function with 1 loop will be around \textit{11s}.
 
-      for (var j=0;j <length;j++) {
-   	console.log(i,j);
-      }
+\begin{lstlisting}[caption=iterate function with 1 loop,label=l:iterate,language=Java]
+
+function iterate(max){
+
+    var start = process.hrtime();
+    var precision = 3;
+    for(var i = 0; i< max; i++){
+        var c = 10 + 5;
     }
- 
-}
-\end{lstlisting}
 
-In some cases,variables controlling the loop iteration, are also passed to a function as a parameter as shown in listing  \ref{2:listings}.We pass a parameter named array to function selectionSort,which is used by two nested loops inside the function.These kind of  input dependent loops are prone to attacks.For example,If an attacker controls the input of the function selectionSort in listing \ref{2:listings} he or she  can increase the overall execution time of the function.In our example,if we pass an array of size 200 to selectionSort its execution time is approximately 5 seconds.\\
-
-\lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt}
-\lstset{basicstyle=\ttfamily}
-\lstset{frame=tb}
-
-\begin{lstlisting}[caption=Quadratic complexity algorithm for computing a repetitive sum,label=2:listings,language=Java]
-function selectionSort(array) {
- for (var i = -1; ++i < array.length;)
-     {
-     for (var m = j = i; ++j < array.length;) 
-     {
-       if (array[m] > array[j])
-          m = j;
-        }
-
-        var temp = array[m];
-        array[m] = array[i];
-        array[i] = temp;
-    }
-    return array;
-}
-\end{lstlisting}
-
-
-\section{Problems Of Using  Function Input Dependent Loops  }
-\label{sec:problems-of-using-loops}
-Most of the npm modules use  function input dependent loops and they are deployed in the production environments. For example  useragent,dash and react-metric-graphics are the few npm  modules which use function input parameters in loops.An attacker can easily exploit function input dependent loop vulnerabilities for ReDos attacks.\\
-
-In our project we perform static analysis on the npm modules using the \textit{Google Closure Compiler} to identify the function input dependent loop vulnerabilities in the npm modules. \\
-\begin{figure}
-\centering
-\tikzstyle{decision} = [diamond, draw, fill=blue!20,
-    text width=4.5em, text badly centered, node distance=2.5cm, inner sep=0pt]
-\tikzstyle{block} = [rectangle, draw, fill=blue!20,
-    text width=5em, text centered, rounded corners, minimum height=4em]
-\tikzstyle{line} = [draw, very thick, color=black!50, -latex']
-\tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=2.5cm,
-    minimum height=2em]
-
-\begin{tikzpicture}[scale=2, node distance = 2cm, auto]
-    % Place nodes
-    \node [block] (googleClosureCompiler) {Google Closure Compiler};
-    \node [cloud, left of=googleClosureCompiler] (inputFiles) {Input: .js files };
-    \node [block, below of=googleClosureCompiler] (identifyFunctions) {Indentify Functions};
-    \node [block, below of=identifyFunctions] (identifyLoops) {Identify Loops};
-    \node [decision, below of=identifyLoops] (isLoopVulnerable) {is loop vulnerable?};
-    \node [block, below of=isLoopVulnerable, node distance=2.5cm] (outputFile) {write to output file};
+    var elapsed = process.hrtime(start)[1] / 1000000;
     
-    % Draw edges
- 
-    \path [line] (googleClosureCompiler) -- (identifyFunctions);
-    \path [line] (identifyFunctions) -- (identifyLoops);
-    \path [line] (identifyLoops) -- (isLoopVulnerable);
-    \path [line] (isLoopVulnerable) -- node [near start, color=black] {yes} (outputFile);
-    \tikzstyle{no}=[near end,color=black]
-    \path [line] (isLoopVulnerable) -- node  {no} (identifyFunctions);
-\end{tikzpicture}
-\caption{Workflow for indentifying function input dependent loops in npm modules } \label{fig:workflow}
-\end{figure}
-
-
-
-
-\section{Our Approach}
-\label{sec:our-approach}
-
-\section{Future Work}
-How to automatically verify the correctness of the identified vulnerabilities
-\label{sec:our-approach}
-\subsection{Citations}
-
-Use citations to refer to other 
-papers~\cite{HerlihyMoss1993-TransactionalMemory,FraserHanson1992-CodeGenerator} 
-and books~\cite{Strunk-ElementsOfStyle,Aho86-Compilers}.
-
-
-\subsection{Tables}
-
-Table~\ref{t:Translations} shows how a table looks like.
-
-\begin{table}[ht]
-\centering
-\begin{tabular}{ll}
-\hline
-\textbf{English} & \textbf{German}\\
-\hline
-cell phone       & Handy\\
-Diet Coke        & Coca Cola light\\
-\hline
-\end{tabular}
-\caption[Translations]{\label{t:Translations}Translations.}
-\end{table}
-
-\subsection{Figures}
-
-Figure~\ref{f:SOLAlogo} shows a simple figure with a single picture
-and Figure~\ref{f:SubfigureExample} shows a more complex figure
-containing subfigures.
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=.6\linewidth]{figures/SOLALogo}
-\caption[SOLA logo]{\label{f:SOLAlogo}SOLA logo.}
-\end{figure}
-
-\begin{figure}[ht]
-\centering
-\subfigure[TUDaLogo]{\includegraphics[height=12mm]{figures/TUDaLogo}}\quad
-\subfigure[SOLALogo]{\includegraphics[height=12mm]{figures/SOLALogo}}
-\caption[Subfigure example]{\label{f:SubfigureExample}Two pictures as
-  part of a single figure through the magic of the subfigure package.}
-\end{figure}
-
-
-\subsection{Source code}
-
-The listings package provides tools to typeset source code
-listings. It supports many programming languages and provides a lot of
-formatting options.
-
-\lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt}
-\lstset{basicstyle=\ttfamily}
-\lstset{frame=tb}
-
-\begin{lstlisting}[float,caption=Example usage of the listing package,label=l:javaClass,language=Java]
-class S {
-   int f1 = 42;
-   public S(int x) {
-          f1 = x;
-   }
+	console.log(
+		process.hrtime(start)[0] + " s, "+
+		elapsed.toFixed(precision)+" ms - " 
+	);
 }
+
 \end{lstlisting}
 
-Listing \ref{l:javaClass} shows an example listing. Code snippets can
-also be inserted in normal text:
-\verb$\lstinline|int f1 = 42;|$ gives \lstinline$int f1 = 42;$
+If other functions in application are taking less time, iterate
+function is subject to performance bug and also security bug specially
+in node modules.
+
+This problems gets interesting if we introduce nested loops
+i.e, 2 or 3 nested loops. Consider the code in Listing 2. Function
+double loop has input parameters max and 2 nested loops. Client
+of doubleLoop can pass input max 105
+and can introduce as delay
+of around 6 s, 491.041 ms . Important thing to note is function is
+only doing simple sum of 10 and 5 but due to input dependent loop
+execution time of function takes much time.
+
+\begin{lstlisting}[caption=doubleLoop function with 2 nested loop,label=l:doubleLoop,language=Java]
+
+function doubleLoop(max){
+
+    var start = process.hrtime();
+    var precision = 3;
+    for(var i = 0; i< max; i++){
+    	for(var j=0; j< i; j++){
+			 var c = 10 + 5;
+ 		}
+ 	}
+
+    var elapsed = process.hrtime(start)[1] / 1000000;
+	console.log(
+		process.hrtime(start)[0] + " s, "+
+		elapsed.toFixed(precision)+" ms - " 
+	);
+}
+
+doubleLoop(Math.pow(10,5));
+
+\end{lstlisting}
+
+As we increase the nested loops input to the parameter gets
+smaller. A function with 3 nested loops and input parameter max
+can have execution time of around 6 s with max = 103.2
+Consider the code in Listing 3.
+
+\begin{lstlisting}[caption=tripleLoop function with 2 nested loop,label=l:tripleLoop,language=Java]
+
+function tripleLoop(max){
+
+    var start = process.hrtime();
+    var precision = 3;
+    for(var i = 0; i< max; i++){
+    	for(var j=0; j< i; j++){
+    		for(var k=0; k< max; k++){
+				 var c = 10 + 5;
+ 			}
+ 		}
+ 	}
+
+    var elapsed = process.hrtime(start)[1] / 1000000;
+	console.log(
+		process.hrtime(start)[0] + " s, "+
+		elapsed.toFixed(precision)+" ms - " 
+	);
+}
+
+tripleLoop(Math.pow(10,3.2));
+
+\end{lstlisting}
 
 
-\subsection{Miscellany}
+\section{Problems with using loops depending on function input parameters}
+\label{sec:problems}
+Code in Listing \ref{l:doubleLoop} and Listing \ref{l:tripleLoop} are not only subject to performance issues but also to denial of service (DoS) attacks. Attacker can control the input parameter and can introduce delay of 10-15 seconds in the execution time of function. Node.js security experts consider any slowdown larger than one second as security relevant.
 
-\begin{description}
+\section{Avoiding the problem}
+\label{sec:avoiding}
 
-\item[Capitalization.] When referring to a named table (such as in the
-  previous section), the word \emph{table} is capitalized. The same is
-  true for figures, chapters and sections.
+Following are some approaches which can be used to avoid the problem with input dependent nested loops.
 
-\item[Bibliography.] Use \verb|bibtex| to make your life easier and to
-  produce consistently formatted entries.
+\subsection{Approach 1 : Introduce Upper bound on input parameters}
+One simple way to avoid such problem is introducing upper bound on input parameter.
+Consider the code in Listing \ref{l:avoidProblem} which exits from the function if input exceeds the given bound which is \begin{math} 10^{2} \end{math}.
 
-\item[Contractions.] Avoid contractions. For instance, use ``do not''
-  rather than ``don't.''
+\begin{lstlisting}[caption=avoidProblem function with 3 nested loop,label=l:avoidProblem,language=Java]
 
-\item[Style guide.] A classic reference book on writing style is
-  Strunk's \emph{The Elements of Style} \cite{Strunk-ElementsOfStyle}.
+function avoidProblem(max){
+	if(max > Math.pow(10,2)) {
+		return;	
+	}
+    for(var i = 0; i< max; i++){
+    	for(var j=0; j< i; j++){
+    		for(var k=0; k< max; k++){
+				 var c = 10 + 5;
+ 			}
+ 		}
+ 	}
+}
 
-\end{description}
+avoidProblem(Math.pow(10,3.2));
+
+\end{lstlisting}
+
+\subsubsection{Problems with Approach 1}
+
+Introducing such input bound checks as in Listing \ref{l:avoidProblem} requires full understanding of the code and also the usage of function.
+
+\subsection{Approach 2 : Changing the logic} 
+Other way can be changing the logic from nested loops to maybe introducing new functions which means one needs to find places where input dependent functions with loops are used in the code.
+\subsubsection{Problems with Approach 2}
+\begin{itemize}
+\item Code is already deployed in production environment.
+\item JavaScript uses minified versions of files.
+\item JavaScript file can have 10000s lines of code.
+\item Different variations of functions.
+		\begin{itemize}
+			\item JavaScript can use assignment of function to other variable 
+				e.g, var a = function() {}
+			\item Using anonymous functions
+				e.g, (function())
+			\item JavaScript also uses nested functions
+				e.g, (function(a, function(){}))
+		\end{itemize}
+\item Different variations of Loops
+	 e.g  For, While, For In, forEach etc.
+\item Assignment of function input parameter to other variables and using that in loop.
+\item Using input parameter in function call which in turn uses for loop.
+	 
+			
+\end{itemize}
 
 
-\section{Limitations}
-
-\blindtext % replace this with your own text
 
 
-\section{Results}
-
-\blindtext % replace this with your own text
-
-
-\section{Conclusion}
-
-\blindtext % replace this with your own text
-
-\bibliographystyle{abbrvnat}
+\citep{Aho86-Compilers}
 \bibliography{references}
-
-
-\bibliographystyle{abbrvnat}
-
-
 
 \end{document}
