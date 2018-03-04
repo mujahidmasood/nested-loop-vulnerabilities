@@ -3,24 +3,22 @@ package com.ptaa.code;
 import com.google.javascript.jscomp.*;
 import com.google.javascript.jscomp.Compiler;
 import com.google.javascript.rhino.Node;
-
 import java.nio.file.*;
 import java.util.*;
 
 public class Main {
 
     private static Compiler compiler;
-    private static CompilerOptions options;
-    private static SourceFile sourceFile;
+
     private static Map<String, String> assignedVars;
     private static Node function = null;
-    private static List<String> params ;
-    private static Map<Integer,String> vulnerabilitesMap;
+    private static List<String> params;
+    private static Map<Integer, String> vulnerabilitesMap;
 
 
     public static Compiler init() {
         compiler = new Compiler();
-        options = new CompilerOptions();
+        CompilerOptions options = new CompilerOptions();
         options.setLanguage(CompilerOptions.LanguageMode.ECMASCRIPT_2015);
         options.setCodingConvention(new GoogleCodingConvention());
         compiler.initOptions(options);
@@ -33,7 +31,7 @@ public class Main {
     }
 
     public static void readScriptFile(String fileName) throws Exception {
-        sourceFile = SourceFile.fromFile(fileName);
+        SourceFile sourceFile = SourceFile.fromFile(fileName);
         if (compiler == null) {
             compiler = init();
         }
@@ -48,13 +46,18 @@ public class Main {
                     iterateScript(child);
                 }
             }
-        }finally {
+        } finally {
             String file_out = fileName + "\n";
             file_out += "------------------------------------------------\n";
-            writeOutput(fileName,file_out);
-            for(String output : vulnerabilitesMap.values()){
-                writeOutput(fileName,output);
+            writeOutput(fileName, file_out);
+            for (String output : vulnerabilitesMap.values()) {
+                writeOutput(fileName, output);
             }
+            vulnerabilitesMap.clear();
+            assignedVars.clear();
+            params.clear();
+            compiler = null;
+            function = null;
         }
     }
 
@@ -99,7 +102,7 @@ public class Main {
                                 assignedVars.put(assignedVar, mappedVar);
                             }
 
-                            if(checkLoop(child)) {
+                            if (checkLoop(child)) {
                                 decideVulnerable(var, mappedVar);
                                 decideVulnerable(var, assignedVar);
                             }
@@ -143,7 +146,7 @@ public class Main {
                                 }
 
                                 assignedVars.put(leftOp, rightOp);
-                                if(checkLoop(child)) {
+                                if (checkLoop(child)) {
                                     decideVulnerable(geChild, leftOp);
                                     decideVulnerable(geChild, rightOp);
                                 }
@@ -160,14 +163,14 @@ public class Main {
                     for (Node incChild : child.children()) {
                         String unaryOp = incChild.getQualifiedName();
                         assignedVars.put(unaryOp, unaryOp);
-                        if(checkLoop(incChild)) {
+                        if (checkLoop(incChild)) {
                             decideVulnerable(incChild, unaryOp);
                         }
                     }
                     break;
                 case NAME:
                     if (!child.getParent().isParamList()) {
-                        if(child != null && child.getQualifiedName() != null){
+                        if (child != null && child.getQualifiedName() != null) {
                             decideVulnerable(child, child.getQualifiedName());
                         }
                     }
@@ -189,17 +192,17 @@ public class Main {
     private static void decideVulnerable(Node child, String varName) throws Exception {
 
         String functionName = "()";
-        if(function != null && function.getSecondChild() != null) {
+        if (function != null && function.getSecondChild() != null) {
             functionName = function.getFirstChild().getQualifiedName();
         }
 
         int lineNo = child.getLineno();
-        String func =functionName;
+        String func = functionName;
 
         String mappedVarValue = assignedVars.get(varName);
         if (params.contains(mappedVarValue) || params.contains(varName)) {
-                String formatted_output = String.format("%-50s %s", func, lineNo + "\n");
-                vulnerabilitesMap.putIfAbsent(lineNo,formatted_output);
+            String formatted_output = String.format("%-50s %s", func, lineNo + "\n");
+            vulnerabilitesMap.putIfAbsent(lineNo, formatted_output);
         }
     }
 
@@ -210,10 +213,10 @@ public class Main {
 
 
     public static void writeOutput(String inputFile, String output) throws Exception {
-        String file =  inputFile +"_output.txt";
+        String file = inputFile + "_output.txt";
         Path path = Paths.get(file);
         Files.createDirectories(path.getParent());
-        if(!Files.exists(path)) {
+        if (!Files.exists(path)) {
             Files.createFile(path);
         }
 
@@ -224,13 +227,27 @@ public class Main {
 
     public static void main(String[] args) {
 
-        String file = "src/test/resources/agent.js";
-
+        String modules_path = "/home/mujahidmasood/Masters/DSS/Semester5/PTAA/nested-loop-vulnerabilities/node_modules";
         try {
-            readScriptFile(file);
+            Files.walk(Paths.get(modules_path))
+                    .filter(Files::isRegularFile)
+                    .filter(path -> !Files.isDirectory(path))
+                    .filter(file -> file.toString().endsWith(".js"))
+                    .forEach(path -> {
+                        try {
+                            System.out.println(path.toString());
+                            readScriptFile(path.toString());
+                        } catch (Exception e) {
+                            System.out.println(e.getMessage());
+                            e.printStackTrace();
+                        }
+                    });
+
         } catch (Exception e) {
-            System.out.println(e.getCause());
+            System.out.println(e.getMessage());
             e.printStackTrace();
         }
+
+
     }
 }
