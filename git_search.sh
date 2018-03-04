@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-#git grep -l --all-match -e "for" --or -e "while"
+
+#this script searches javascript repositories on github
+#opens the browser to show the results.
 
 q="language:javascript&extension:EXTENSION:js"
 i=0

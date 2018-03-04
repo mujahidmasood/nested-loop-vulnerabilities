@@ -8,7 +8,17 @@ import java.util.Map;
 
 public class OutputWriter {
 
-    public static void writeOutput(String inputFile, String output) throws Exception {
+    /**
+     * Create output file to write vulnerabilities
+     * Output file name is with of format inputFile_output.txt
+     * The output directory is specified in inputFile
+     * Writes the output to file
+     *
+     * @param inputFile
+     * @param output
+     * @throws Exception
+     */
+    public static void createOuputFile(String inputFile, String output) throws Exception {
         String file =  inputFile +"_output.txt";
         Path path = Paths.get(file);
         Files.createDirectories(path.getParent());
@@ -21,12 +31,22 @@ public class OutputWriter {
 
     }
 
-    public static void write(String fileName, Map<Integer,String> vulnerabilitesMap) throws Exception {
+    /**
+     * Writes formatted output
+     * First line is name of file for which output is written
+     *
+     * Output is written with function name and line number.
+     *
+     * @param fileName
+     * @param vulnerabilitesMap
+     * @throws Exception
+     */
+    public static void writeFormattedOutpu(String fileName, Map<Integer,String> vulnerabilitesMap) throws Exception {
         String file_out = fileName + "\n";
         file_out += "------------------------------------------------\n";
-        OutputWriter.writeOutput(fileName, file_out);
+        createOuputFile(fileName, file_out);
         for (String output : vulnerabilitesMap.values()) {
-            OutputWriter.writeOutput(fileName, output);
+            createOuputFile(fileName, output);
         }
     }
 }

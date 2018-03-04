@@ -11,13 +11,26 @@ public class StaticAnalyzer {
     private static Map<String, String> assignedVars;
     private static Node function = null;
     private static List<String> params;
-    private static Map<Integer, String> vulnerabilitesMap;
+    private static Map<Integer, String> vulnerabilitiesMap;
 
-    public static void readScriptFile(String fileName) throws Exception {
-
+    /**
+     * Constructor initializes data structure to be used.
+     */
+    public StaticAnalyzer() {
         assignedVars = new HashMap<>();
         params = new ArrayList<>();
-        vulnerabilitesMap = new TreeMap<>();
+        vulnerabilitiesMap = new TreeMap<>();
+    }
+
+
+    /**
+     * Reads the given script files
+     *  and iterates over the children
+     *  Finally writes the output by iterating vulnerabilitiesMap
+     * @param fileName
+     * @throws Exception
+     */
+    public static void readScriptFile(String fileName) throws Exception {
 
         SourceFile sourceFile = SourceFile.fromFile(fileName);
         Compiler compiler = ClosureEngine.init();
@@ -34,14 +47,23 @@ public class StaticAnalyzer {
             }
         } finally {
 
-            OutputWriter.write(fileName,vulnerabilitesMap);
-            vulnerabilitesMap.clear();
+            OutputWriter.writeFormattedOutpu(fileName, vulnerabilitiesMap);
+            vulnerabilitiesMap.clear();
             assignedVars.clear();
             params.clear();
             function = null;
         }
     }
 
+    /**
+     * iterates the child
+     * if child is parameter add it in parameters list
+     * if child is function save the reference in function variable
+     * in other case check for different cases.
+     *
+     * @param child
+     * @throws Exception
+     */
     public static void iterateScript(Node child) throws Exception {
         if (child.isParamList()) {
             for (Node param : child.children()) {
@@ -170,23 +192,40 @@ public class StaticAnalyzer {
     }
 
 
+    /**
+     * Checks if the input node is present in parameters
+     *  if yes node is written in vulnerabilities map
+     *
+     * @param child
+     * @param varName
+     * @throws Exception
+     */
     private static void decideVulnerable(Node child, String varName) throws Exception {
 
         String functionName = "()";
+        //Get the function name
         if (function != null && function.getSecondChild() != null) {
             functionName = function.getFirstChild().getQualifiedName();
         }
 
+        //Get the line no of child node
         int lineNo = child.getLineno();
         String func = functionName;
 
+        //check if the variable is present in parameters list
         String mappedVarValue = assignedVars.get(varName);
         if (params.contains(mappedVarValue) || params.contains(varName)) {
             String formatted_output = String.format("%-50s %s", func, lineNo + "\n");
-            vulnerabilitesMap.putIfAbsent(lineNo, formatted_output);
+            vulnerabilitiesMap.putIfAbsent(lineNo, formatted_output);
         }
     }
 
+    /**
+     * Check if the parent of node is loop
+     *
+     * @param node
+     * @return
+     */
     private static boolean checkLoop(Node node) {
         Node child = node.getParent();
         return child.isForIn() || child.isForOf() || child.isWhile() || child.isVanillaFor();
