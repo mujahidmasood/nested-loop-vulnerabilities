@@ -354,23 +354,65 @@ Output format is
 
 \end{itemize}
 
-\subsubsection{Validation of claim}
+\subsubsection{Validation}
 With above functions validation is easy we added execution time to validate our claim as shown in Listing \ref{l:doubleLoop}, \ref{l:tripleLoop}
 
 \section{Analysing Node modules}
 We run our analysis on following node modules. In order to identify nested loops we mainly focused on video streaming,audio streaming, matrix and data structure libraries to find the code using nested loops.
+Table~\ref{t:Comparison} shows how a table looks like.
 
-\begin{itemize}
-\item dashjs : Library to quality framework for building video and audio players that play back MPEG-DASH content using client-side JavaScript.
+\begin{table}[ht]
+\begin{tabular}{ |p{2cm}||p{2cm}|p{2cm}|p{2cm}|  }
+ \hline
+ \textbf{Node Module}&\textbf{Total input-dependent loop vulnerabilities}&\textbf{Correctly Identified} &\textbf{False Positives}\\
+ \hline
+loaddash&A modern JavaScript utility library delivering modularity, performance and extras.&only 1 for loop &yes  \\
+\hline 
+dashjs &Library to quality framework for building video and audio players that play back MPEG-DASH&2 for loop &yes  \\
+\hline 
+useragent &Useragent allows you to parse user agent string with high accuracy by using hand tuned dedicated regular expressions for browser matching. &only 1 for loop &yes  \\
+\hline \\
+ lru cache & This is an LRU (least recently used) cache implementation in JavaScript.&0 &yes but false positives  \\
+\hline 
 
-\item loaddash : A modern JavaScript utility library delivering modularity, performance & extras.
-\item lru cache : This is an LRU (least recently used) cache implementation in JavaScript.
-\item 
-\item 
-\item 
-\end{itemize}
-We have written generalize code which can iterate on the directories and identify the
+\end{tabular}
 
+\caption[Comparison]{\label{t:Comparison} Result of analyzing node modules.}
+\end{table}
+\subsection{Validating Node Modules}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=1\linewidth]{figures/useragent-isSafe}
+\caption[Node module useragent isSafe function]{\label{f:isSafe}Node module useragent isSafe function}
+\end{figure}
+In above figure \ref{f:isSafe} code on line numbers 418 and 419 is vulnerable.After running our code we identified our code on node module user agent we identified  the results as shown in the figure 
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.8\linewidth]{figures/useragent-result}
+\caption[Node module useragent isSafe function]{\label{f:result}Node module useragent isSafe function}
+\end{figure}
+To validate,we introduced function execution time at the start and at the end of loop inside a function as shown  in figure \ref{f:instumentation} below:
+\begin{figure}[ht]
+\centering
+\includegraphics[width=1\linewidth]{figures/useragent-instumentation}
+\caption[Node module useragent isSafe function]{\label{f:instumentation}Node module useragent isSafe function}
+\end{figure}
+
+\subsection{Manually Triggering Identified Vulnerable Function}
+
+A random test script of length  \begin{math}10^{6} \end{math} was provided as an input to a parse function and it took approximately 5 seconds to execute the method as shown in figure below:
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=1\linewidth]{figures/useragent-manual-invoking}
+\caption[Node module useragent isSafe function]{\label{f:invoking}Node module useragent isSafe function}
+\end{figure}
+
+\section{Conclusion}
+
+This project correctly analyses the vulnerabilities along with 80 percentage  of false positives   
 
 \citep{Aho86-Compilers}
 \bibliography{references}
