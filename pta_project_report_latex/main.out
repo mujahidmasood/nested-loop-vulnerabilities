@@ -17,3 +17,7 @@
 \BOOKMARK [1][-]{section.7}{Analysing Node modules}{}% 17
 \BOOKMARK [2][-]{subsection.7.1}{Validating Node Modules}{section.7}% 18
 \BOOKMARK [2][-]{subsection.7.2}{Manually Triggering Identified Vulnerable Function}{section.7}% 19
+\BOOKMARK [1][-]{section.8}{Conclusion}{}% 20
+\BOOKMARK [2][-]{subsection.8.1}{Reason for false positives}{section.8}% 21
+\BOOKMARK [1][-]{section.9}{Future Work}{}% 22
+\BOOKMARK [1][-]{section.10}{Difficulties and Challenges}{}% 23

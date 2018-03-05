@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6500 64-bit) (preloaded format=pdflatex 2018.1.21)  5 MAR 2018 01:05
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6500 64-bit) (preloaded format=pdflatex 2018.1.21)  5 MAR 2018 19:35
 entering extended mode
 **./main.tex
 (main.tex
@@ -902,7 +902,7 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 Non-PDF special ignored!
 
 ]
-<figures/workflow.png, id=150, 1857.94125pt x 1626.075pt>
+<figures/workflow.png, id=162, 1857.94125pt x 1626.075pt>
 File: figures/workflow.png Graphic file (type png)
 <use figures/workflow.png>
 Package pdftex.def Info: figures/workflow.png  used on input line 264. on input
@@ -910,33 +910,33 @@ Package pdftex.def Info: figures/workflow.png  used on input line 264. on input
 Package pdftex.def Info: Requested size: 240.0pt x 210.03252pt on input line 26
 4.
  [2 <./figures/workflow.png>]
-<figures/structure.jpeg, id=174, 933.4875pt x 1284.8pt>
-File: figures/structure.jpeg Graphic file (type jpg)
-<use figures/structure.jpeg>
-Package pdftex.def Info: figures/structure.jpeg  used on input line 287. on inp
-ut line 287.
-Package pdftex.def Info: Requested size: 240.0pt x 330.31528pt on input line 28
+<figures/project-structure.png, id=186, 235.63031pt x 458.46281pt>
+File: figures/project-structure.png Graphic file (type png)
+<use figures/project-structure.png>
+Package pdftex.def Info: figures/project-structure.png  used on input line 287.
+ on input line 287.
+Package pdftex.def Info: Requested size: 240.0pt x 466.96829pt on input line 28
 7.
 
 Underfull \hbox (badness 1348) in paragraph at lines 302--302
 []\OT1/ptm/m/n/9 StaticAnalyzer : Class has main logic, it-er-ates the
  []
 
-<figures/testcases.png, id=175, 520.94624pt x 531.9875pt>
+<figures/testcases.png, id=187, 520.94624pt x 531.9875pt>
 File: figures/testcases.png Graphic file (type png)
 <use figures/testcases.png>
 Package pdftex.def Info: figures/testcases.png  used on input line 335. on inpu
 t line 335.
 Package pdftex.def Info: Requested size: 240.0pt x 245.0825pt on input line 335
 .
-<figures/output.png, id=177, 560.0925pt x 192.72pt>
+<figures/output.png, id=189, 560.0925pt x 192.72pt>
 File: figures/output.png Graphic file (type png)
 <use figures/output.png>
 Package pdftex.def Info: figures/output.png  used on input line 344. on input l
 ine 344.
 Package pdftex.def Info: Requested size: 240.0pt x 82.57979pt on input line 344
 .
-[3 <./figures/structure.jpeg> <./figures/testcases.png>]
+[3 <./figures/project-structure.png> <./figures/testcases.png>]
 Underfull \hbox (badness 10000) in paragraph at lines 367--367
 []\OT1/ptm/b/n/9 Total input-
  []
@@ -1076,45 +1076,42 @@ Overfull \hbox (37.62201pt too wide) in paragraph at lines 365--379
 [][] 
  []
 
-<figures/useragent-isSafe.jpg, id=190, 668.4975pt x 418.56375pt>
+<figures/useragent-isSafe.jpg, id=201, 668.4975pt x 418.56375pt>
 File: figures/useragent-isSafe.jpg Graphic file (type jpg)
 <use figures/useragent-isSafe.jpg>
 Package pdftex.def Info: figures/useragent-isSafe.jpg  used on input line 386. 
 on input line 386.
 Package pdftex.def Info: Requested size: 240.0pt x 150.26768pt on input line 38
 6.
-<figures/useragent-result.jpg, id=192, 408.77719pt x 455.45157pt>
+<figures/useragent-result.jpg, id=203, 408.77719pt x 455.45157pt>
 File: figures/useragent-result.jpg Graphic file (type jpg)
 <use figures/useragent-result.jpg>
 Package pdftex.def Info: figures/useragent-result.jpg  used on input line 393. 
 on input line 393.
 Package pdftex.def Info: Requested size: 192.00073pt x 213.92326pt on input lin
 e 393.
-<figures/useragent-instumentation.jpg, id=194, 758.835pt x 478.78876pt>
+<figures/useragent-instumentation.jpg, id=205, 758.835pt x 478.78876pt>
 File: figures/useragent-instumentation.jpg Graphic file (type jpg)
 <use figures/useragent-instumentation.jpg>
 Package pdftex.def Info: figures/useragent-instumentation.jpg  used on input li
 ne 399. on input line 399.
 Package pdftex.def Info: Requested size: 240.0pt x 151.42563pt on input line 39
 9.
-<figures/useragent-manual-invoking.jpg, id=195, 459.21562pt x 168.63pt>
+<figures/useragent-manual-invoking.jpg, id=206, 459.21562pt x 168.63pt>
 File: figures/useragent-manual-invoking.jpg Graphic file (type jpg)
 <use figures/useragent-manual-invoking.jpg>
 Package pdftex.def Info: figures/useragent-manual-invoking.jpg  used on input l
 ine 409. on input line 409.
 Package pdftex.def Info: Requested size: 240.0pt x 88.13324pt on input line 409
 .
-(main.bbl) [4 <./figures/output.png> <./figures/useragent-isSafe.jpg> <./figure
-s/useragent-result.jpg>]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 416.
- [5
-
- <./figures/useragent-instumentation.jpg> <./figures/useragent-manual-invoking.
-jpg>]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 416.
+[4 <./figures/output.png> <./figures/useragent-isSafe.jpg>] (main.bbl) [5 <./fi
+gures/useragent-result.jpg> <./figures/useragent-instumentation.jpg> <./figures
+/useragent-manual-invoking.jpg>]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 444.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 444.
  (main.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 416.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 416.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 444.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 444.
 
 
 Package rerunfilecheck Warning: File `main.out' has changed.
@@ -1122,18 +1119,18 @@ Package rerunfilecheck Warning: File `main.out' has changed.
 (rerunfilecheck)                or use package `bookmark'.
 
 Package rerunfilecheck Info: Checksums for `main.out':
-(rerunfilecheck)             Before: 306353196A8238D615070BE452B8B468;1201
-(rerunfilecheck)             After:  0C91190F96063447F72D8FA27E60DC69;1376.
+(rerunfilecheck)             Before: 870754BD943C7DA0DEBC1A0F71EF334B;1423
+(rerunfilecheck)             After:  7B7A3CE83436B477D784F088FE5FF0F4;1613.
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 416.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 444.
  ) 
 Here is how much of TeX's memory you used:
- 21000 strings out of 493312
- 389089 string characters out of 3138873
- 547773 words of memory out of 3000000
- 24049 multiletter control sequences out of 15000+200000
+ 21005 strings out of 493312
+ 389201 string characters out of 3138873
+ 547774 words of memory out of 3000000
+ 24052 multiletter control sequences out of 15000+200000
  26986 words of font info for 56 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
  55i,10n,60p,409b,1143s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -1145,9 +1142,9 @@ msfonts/cm/cmsy9.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/c
 m/cmtt8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/times/utmb8a.pfb><C:/P
 rogram Files/MiKTeX 2.9/fonts/type1/urw/times/utmr8a.pfb><C:/Program Files/MiKT
 eX 2.9/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (5 pages, 782300 bytes).
+Output written on main.pdf (5 pages, 508948 bytes).
 PDF statistics:
- 268 PDF objects out of 1000 (max. 8388607)
- 111 named destinations out of 1000 (max. 500000)
- 189 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 282 PDF objects out of 1000 (max. 8388607)
+ 115 named destinations out of 1000 (max. 500000)
+ 213 words of extra memory for PDF output out of 10000 (max. 10000000)
 

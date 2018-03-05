@@ -64,11 +64,11 @@ to a specific class of denial of service attack called algorithmic
 complexity attacks. These attacks consist of exploiting the worst
 case performance of algorithms to trigger slow computations that
 block the event loop for a large period of time. The focus of this
-project is to
+project is to identify function input-dependent nested loops by:
 \begin{itemize}
-\item Identify the functions in code.
-\item Identify the input parameters to the functions.
-\item Identify the loops using input parameters of functions.
+\item First ,identifying the functions in code and then
+\item by identifying the input parameters of the functions and finally,
+\item by identifying the input-dependent nested loops inside the functions.
 \item Impact of using function input parameters with loops in terms
 of execution time as well as denial of service attack.
 \end{itemize}
@@ -284,7 +284,7 @@ Other way can be changing the logic from nested loops to maybe introducing new f
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=1\linewidth]{figures/structure}
+\includegraphics[width=1\linewidth]{figures/project-structure}
 \caption[Project Structure]{\label{f:structure}Project Structure.}
 \end{figure}
 
@@ -412,7 +412,31 @@ A random test script of length  \begin{math}10^{6} \end{math} was provided as an
 
 \section{Conclusion}
 
-This project correctly analyses the vulnerabilities along with 80 percentage  of false positives   
+This project correctly analyses the vulnerabilities along with 80 percentage of false positives.
+
+\subsection{Reason for false positives}
+Our implementation checks if the input parameter is used, if it is used at any instance of variable, function call or assignment, we output it as vulnerable. This is not the scope of project but technically some function call can make take much longer time for execution because of used parameter.
+
+\section{Future Work}
+\begin{itemize}
+\item Reducing the number of false positives in the code this can be done by properly defining and documenting vulnerabilities. For example if we have 3 nested functions and all have parameters but inner function as loop which uses parameters, should this be considered vulnerable or not.
+\item Writing the bash or python script to make the search code with nested loop instances easy to find on github or other code repositories.
+for example \\
+ \textit{git grep -l --all-match -e "for" --or -e "while"} \\
+this command find for or while loop instance in code.
+\item Validating the code is bit challenging because vulnerable function can be dependent on many other calling functions and to really see it in practice one needs to fulfil all dependencies.
+
+
+\end{itemize}
+
+\section{Difficulties and Challenges}
+
+Following are some places we found it difficult
+\begin{itemize}
+\item The code instances which use nested loops.
+\item Triggering the identified code because functions identified had many dependencies.
+\item Coming up with input parameter, we solved this by creating random input in case of useragent.
+\end{itemize}
 
 \citep{Aho86-Compilers}
 \bibliography{references}
