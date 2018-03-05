@@ -66,10 +66,10 @@ case performance of algorithms to trigger slow computations that
 block the event loop for a large period of time. The focus of this
 project is to identify function input-dependent nested loops by:
 \begin{itemize}
-\item First ,identifying the functions in code and then
-\item by identifying the input parameters of the functions and then,
-\item by identifying the input-dependent nested loops inside the functions and finally,
-\item by analyzing the impact of function input-dependent loops in terms
+\item Identifying the functions in code.
+\item Identifying the input parameters of the functions.
+\item Identifying the input-dependent nested loops inside the functions.
+\item Analyzing the impact of function input-dependent loops in terms
 of execution time as well as denial of service attack.
 \end{itemize}
 
@@ -78,9 +78,9 @@ of execution time as well as denial of service attack.
 \label{sec:introduction}
 Execution time of the functions is really important to write scalable applications. In normal application overall execution time of function depends upon the slowest function.
 
-Consider the code in Listing \ref{l:iterate} in which we have an iterate function,with function input parameter max it has single loop which is iterating up till max.
+Consider the code in Listing \ref{l:iterate} in which we have an iterate function,with function input parameter max,which has a single loop,iterating up till max.
 
-So caller of function can pass input of \begin{math} 10_{10} \end{math} and execution time of simple function with 1 loop will be around \textit{11s}.
+So caller of function can pass input of \begin{math} 10^{10} \end{math} and execution time of simple function with single loop will be around \textit{11s}.
 
 \begin{lstlisting}[caption=iterate function with single loop,label=l:iterate,language=Java]
 
@@ -108,14 +108,13 @@ in node modules.
 
 This problems gets interesting if we introduce nested loops
 i.e, 2 or 3 nested loops. Consider the code in Listing 2. Function
-double loop has input parameters max and 2 nested loops. Client
-of doubleLoop can pass input max 105
-and can introduce as delay
-of around 6 s, 491.041 ms . Important thing to note is function is
-only doing simple sum of 10 and 5 but due to input dependent loop
-execution time of function takes much time.
+doubleLoop has input parameter max and two nested loops. Client
+of doubleLoop can pass input max \begin{math} 10^{5} \end{math}
+and can introduce a delay of around 6 seconds. Important thing to note is that function is
+only doing simple sum of 10 and 5 but due to input dependent loop,
+execution of the function takes longer time.
 
-\begin{lstlisting}[caption=doubleLoop function with 2 nested loop,label=l:doubleLoop,language=Java]
+\begin{lstlisting}[caption=doubleLoop function with two nested loops,label=l:doubleLoop,language=Java]
 
 function doubleLoop(max){
 
@@ -138,15 +137,12 @@ doubleLoop(Math.pow(10,5));
 
 \end{lstlisting}
 
-As we increase the nested loops input to the parameter gets
-smaller. A function with 3 nested loops and input parameter max
-can have execution time of around 6 s with max = 103.2
-Consider the code in Listing 3.
+As we increase the number of nested loops,to obtain longer execution time of function,we need to pass smaller function input parameter.For example a function with 3 nested loops and input parameter max
+can have execution time of around 6 s with max = \begin{math} 10^{3.2} \end{math}
+Consider the code in Listing \ref{l:tripleLoop}.
 
-\begin{lstlisting}[caption=tripleLoop function with 2 nested loop,label=l:tripleLoop,language=Java]
-
+\begin{lstlisting}[caption=tripleLoop function with three nested loops,label=l:tripleLoop,language=Java]
 function tripleLoop(max){
-
     var start = process.hrtime();
     var precision = 3;
     for(var i = 0; i< max; i++){
@@ -169,7 +165,7 @@ tripleLoop(Math.pow(10,3.2));
 \end{lstlisting}
 
 
-\section{Problems with using loops depending on function input parameters}
+\section{Problems with using Function Input-Dependent Loops}
 \label{sec:problems}
 Code in Listing \ref{l:doubleLoop} and Listing \ref{l:tripleLoop} are not only subject to performance issues but also to denial of service (DoS) attacks. Attacker can control the input parameter and can introduce delay of 10-15 seconds in the execution time of function. Node.js security experts consider any slowdown larger than one second as security relevant.
 
@@ -182,7 +178,7 @@ Following are some approaches which can be used to avoid the problem with input 
 One simple way to avoid such problem is introducing upper bound on input parameter.
 Consider the code in Listing \ref{l:avoidProblem} which exits from the function if input exceeds the given bound which is \begin{math} 10^{2} \end{math}.
 
-\begin{lstlisting}[caption=avoidProblem function with 3 nested loop,label=l:avoidProblem,language=Java]
+\begin{lstlisting}[caption=avoidProblem function with 3 nested loops and upper bound on input parameter,label=l:avoidProblem,language=Java]
 
 function avoidProblem(max){
 	if(max > Math.pow(10,2)) {
@@ -206,13 +202,13 @@ avoidProblem(Math.pow(10,3.2));
 Introducing such input bound checks as in Listing \ref{l:avoidProblem} requires full understanding of the code and also the usage of function.
 
 \subsection{Approach 2 : Changing the logic} 
-Other way can be changing the logic from nested loops to maybe introducing new functions which means one needs to find places where input dependent functions with loops are used in the code.
+Other way can be changing the logic from nested loops to maybe introducing new functions, which means one needs to find places in the code where input-dependent nested loops are used, for example not using nested loops.
 \subsubsection{Problems with Approach 2}
 \begin{itemize}
 \item Code is already deployed in production environment.
-\item JavaScript uses minified versions of files.
-\item JavaScript file can have 10000s lines of code.
-\item Different variations of functions.
+\item JavaScript uses minified versions of files therefore it is difficult to find code usage.
+\item JavaScript file can have 10000s lines of code,finding such occurrences in code can be difficult.
+\item Different variations of functions:
 		\begin{itemize}
 			\item JavaScript can use assignment of function to other variable 
 				e.g, var a = function() {}
@@ -224,8 +220,7 @@ Other way can be changing the logic from nested loops to maybe introducing new f
 \item Different variations of Loops
 	 e.g  For, While, For In, forEach etc.
 \item Assignment of function input parameter to other variables and using that in loop.
-\item Using input parameter in function call which in turn uses for loop.
-	 
+\item Using input parameter in function call which in turn is used in loops.
 			
 \end{itemize}
 
@@ -236,9 +231,9 @@ Other way can be changing the logic from nested loops to maybe introducing new f
 	\item Find out if code uses function.
 	\item Find out if function uses input parameters.
 	\item Find out if function uses loops.
-	\item Find out if loops use input parameters directly or indirectly.
+	\item Find out if loops use function input parameters directly or indirectly.
 	\item Write vulnerable output.
-	\item Manually validate the results.
+	\item Validate the results.
 			\begin{itemize}
 				\item Manually trigger the identified function.
 				\item Calculate the execution time of function on different inputs
@@ -257,11 +252,12 @@ Other way can be changing the logic from nested loops to maybe introducing new f
 \end{itemize}
 
 
-\subsection{Detailed Steps}
+\subsection{Implementation: Detailed Steps}
 
+Figure \ref{f:workflow} shows the implementation details.
 \begin{figure}[ht]
 \centering
-\includegraphics[width=1\linewidth]{figures/workflow}
+\includegraphics[height=8cm]{figures/workflow}
 \caption[Implementation Detail]{\label{f:workflow}Implementation Detail.}
 \end{figure}
 
@@ -273,11 +269,11 @@ Other way can be changing the logic from nested loops to maybe introducing new f
 \item Tokenize the JavaScript code.
 \item Iterate through the tokens.
 \item Check if the token is function, save the reference for future use.
-\item Check if token is the parameter list, add it in parameter list.
+\item Check if token is the parameterList, add it in parameter list.
 \item Check if the variable is present in parameter list.
-\item Check if the parent of variable is loop.
-\item If variable is loop and present in parameters, add it into vulnerabilitiesMap.
-\item At the end of all tokens print the output in text file.
+\item Check if the parent of variable is loop (while, for, forEach, for in).
+\item If parent of variable is loop and present in parameters, add it into vulnerabilitiesMap.
+\item After traversing all tokens in file, print the output in text file.
 \end{itemize}
 
 \subsection{Project Structure}
@@ -289,36 +285,38 @@ Other way can be changing the logic from nested loops to maybe introducing new f
 \end{figure}
 
 \begin{itemize}
-\item lib : This folder contains libraries.
-\item node modules : This folder contains the npm modules on which we have run the analyis.
-\item report : Contains the project report.
-\item src : Contains the source classes (Java Classes), actual code with implemented logic.
+\item lib : This folder contains jar files.
+\item node modules : This folder contains the npm modules on which we have performed the analysis.
+\item src : Contains the source code (Java Classes), actual code with implemented logic.
 	\begin{itemize}
 		\item main
 			\begin{itemize}
-		\item AnalyzerClient : Main class to invoke the analyser.
+		\item AnalyzerClient : Main class to invoke the StaticAnalyser.
 		\item ClosureEngine : Class for Google closure related settings, mainly initializes the Google Closure Compiler.
 		\item OutputWriter : Class to write the output vulnerabilities in text file.
 		\item StaticAnalyzer : Class has main logic, iterates the JavaScript code, checks for functions, loops and decides vulnerabilities.\end{itemize}
 		
 		\item test
 			\begin{itemize}
-				\item resources : Contains our test cases and output files
+				\item resources : Contains our test cases and output files.
 			\end{itemize}
 		
 	\end{itemize}
 
 \item .gitignore : Contains git ignored files.
-\item clone.sh : Bash script to clone the git directory to specified location.
+\item clone.sh : Bash script to clone the git repository to specified location.
 	\begin{itemize}
-		\item It takes two input parameters git clone directory and location where to clone the project for example to run the file.
-		sh clone.sh https://github.com/project.git /nested-loop-vulnerabilities/node modules
+		\item It takes two input parameters 1. repository and 2. location where to clone the project
+		\\
+		clone.sh can be run as shown below\\
 		
-		It will create new folder named project.git under node modules directory and clone the project in it.
+		sh clone.sh https://github.com/project.git /node modules \\
+		
+		It will create new folder named project.git under node modules directory and clone the project from given online location.
 		
 	\end{itemize}
 
-\item search.sh : Searches the JavaScript projects on github, to show the results it opens google chrome browser.
+\item search.sh : Searches the JavaScript projects on github, to display the results it opens google chrome browser.
 
 \item pom.xml : It contains maven related configurations.
 \item README.md : Contains the instructions on how to use project.
@@ -329,15 +327,15 @@ Other way can be changing the logic from nested loops to maybe introducing new f
 Following section discusses the results on our own test cases and also on node modules.
 In Project code index.js under resources folder contains our test cases, we will demonstrate a few from index.js file.
 
-\subsection{Manual Tests}
 \begin{figure}[ht]
 \centering
 \includegraphics[width=1\linewidth]{figures/testcases}
 \caption[Manual Tests]{\label{f:testcases}Manual Tests.}
 \end{figure}
 
-From the figure \ref{f:testcases} we expect to find vulnerabilities on lines 72,78, 85, 92 and 99 because the functions use input dependent loops.
-We ran the tests using our code and output is as below.
+From the figure 3. we expect to find vulnerabilities on lines 72,78, 85, 92 and 99 because the functions use input dependent loops.
+We ran the tests using our code and output is as shown in figure 4.
+\subsection{Manual Tests}
 
 \begin{figure}[ht]
 \centering
@@ -355,41 +353,63 @@ Output format is
 \end{itemize}
 
 \subsubsection{Validation}
-With above functions validation is easy we added execution time to validate our claim as shown in Listing \ref{l:doubleLoop}, \ref{l:tripleLoop}
+With above functions validation is easy, we added execution time to validate our claim as shown in Listing \ref{l:doubleLoop}, \ref{l:tripleLoop}
 
 \section{Analysing Node modules}
-We run our analysis on following node modules. In order to identify nested loops we mainly focused on video streaming,audio streaming, matrix and data structure libraries to find the code using nested loops.
+In order to identify nested loops we mainly focused on video streaming,audio streaming, matrix and data structure libraries to find the code using input dependent nested loops.
+We found nested loops inside.
+All these libraries and simulations are inside node modules folder.
+\begin{itemize}
+\item tough-cookie
+\item dashjs
+\item loaddash
+\end{itemize}
+
+We identified vulnerabilities in other npm modules with single loop.
+All these simulations are inside resources folder of project.
+\begin{itemize}
+\item useragent
+\item clientsession
+\item glmatrix
+\end{itemize}
+
+
+We performed our analysis on following node modules.
+
 Table~\ref{t:Comparison} shows how a table looks like.
 
 \begin{table}[h]
 \small
 \begin{tabular}{ |p{1.9cm}||p{1.9cm}|p{1.9cm}|p{1.9cm}|  }
  \hline
- \textbf{Node Module}&\textbf{Total input-dependent loop vulnerabilities}&\textbf{Correctly Identified} &\textbf{False Positives}\\
+ \textbf{Node Module}&\textbf{Has Nested Loops}&\textbf{Found Vulnerabilities} &\textbf{False Positives}\\
  \hline
-loaddash&A modern JavaScript utility library delivering modularity, performance and extras.&1 &yes  \\
+loaddash&yes&yes &yes  \\
 \hline 
-dashjs &Library to quality framework for building video and audio players that play back MPEG-DASH&2&yes  \\
+dashjs&yes&yes&yes  \\
 \hline 
-useragent &Useragent allows you to parse user agent string with high accuracy by using hand tuned dedicated regular expressions for browser matching. &1 &yes  \\
-\hline \\
- lru cache & This is an LRU (least recently used) cache implementation in JavaScript.&0 &yes \\
+useragent &no&yes &yes  \\
+\hline 
+ tough-cookie & yes&yes &yes \\
 \hline 
 
 \end{tabular}
 
 \caption[Comparison]{\label{t:Comparison} Result of analyzing node modules.}
 \end{table}
-\subsection{Validating Node Modules}
-
+\subsection{UserAgent Results}
 \begin{figure}[ht]
 \centering
-\includegraphics[width=1\linewidth]{figures/useragent-isSafe}
-\caption[Node module useragent isSafe function]{\label{f:isSafe}Node module useragent isSafe function}
+\includegraphics[height=5cm]{figures/useragent-isSafe}
+\caption[Code analysis performed on node module useragent isSafe function]{\label{f:isSafe}Node module useragent isSafe function}
 \end{figure}
 
-In above figure \ref{f:isSafe} code on line numbers 418 and 419 is vulnerable.After running our code we identified our code on node module user agent we identified  the results as shown in the figure 
-\begin{lstlisting}[caption=Code Instrumentation,label=l:instrumentation,language=Java]
+In above figure \ref{f:isSafe} code on line numbers 418 and 419 is vulnerable.After running our code we identified our code on node module user agent we identified  the results as shown in the figure \ref{f:isSafe}
+
+\subsection{Validating UserAgent Results}
+We added the code to calculate execution time of function in the start and end of parse function as shown in Listing \ref{l:parse}
+ 
+\begin{lstlisting}[caption=Code Instrumentation,label=l:parse,language=Java]
 
 /**
  * Parses the user agent string with the generated parsers from the
@@ -435,19 +455,12 @@ exports.parse = function parse(userAgent, jsAgent) {
 \end{lstlisting}
 
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=0.8\linewidth]{figures/useragent-result}
-\caption[Node module useragent isSafe function]{\label{f:result}Node module useragent isSafe function}
-\end{figure}
-
-
 
 \subsection{Manually Triggering Identified Vulnerable Function}
 
-A random test script of length  \begin{math}10^{4} \end{math} was provided as an input to a parse function and it took approximately 7 seconds to execute the method as shown in listing \ref{l:parse} below:
+A random test script of length  \begin{math}10^{4} \end{math} was provided as an input to a parse function and it took approximately 7 seconds to execute the method as shown in listing \ref{l:test} below:
 
-\begin{lstlisting}[caption=Manual Triggering of vulnerable function in npm module useragent,label=l:parse,language=Java]
+\begin{lstlisting}[caption=Manual Triggering of vulnerable function in npm module useragent,label=l:test,language=Java]
 
 var useragent = require('useragent');
 useragent(true);
@@ -463,16 +476,18 @@ var agent2 = useragent.parse(req.headers['user-agent'], req.query.jsuseragent);
 
 \end{lstlisting}
 
+\subsection{tough-cookie Results}
+
 \begin{figure}[ht]
-\centering
-\includegraphics[width=1.2\linewidth]{figures/tough-cookie}
-\caption[Tough Cookie]{\label{f:cookie}Tough Cookie}
+\centering{\includegraphics[height=5cm]{figures/tough-cookie}}
+\caption[vulnerablilities in npm module tough-cookie in file lib/memstore.js]{\label{f:cookie}vulnerabilities in npm module tough-cookie in file lib/memstore.js}
 \end{figure}
 
+We found nested loops in tough-cookie as shown in figure \ref{f:cookie}.
 
 \section{Conclusion}
 
-This project correctly analyses the vulnerabilities along with 80 percentage of false positives.
+This project correctly analyses the vulnerabilities along with 80 percentage of false positives. 
 
 \subsection{Reason for false positives}
 Our implementation checks if the input parameter is used, if it is used at any instance of variable, function call or assignment, we output it as vulnerable. This is not the scope of project but technically some function call can make take much longer time for execution because of used parameter.
@@ -497,8 +512,5 @@ Following are some places we found it difficult
 \item Triggering the identified code because functions identified had many dependencies.
 \item Coming up with input parameter, we solved this by creating random input in case of useragent.
 \end{itemize}
-
-\citep{Aho86-Compilers}
-\bibliography{references}
 
 \end{document}
