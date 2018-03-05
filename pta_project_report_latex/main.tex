@@ -67,22 +67,22 @@ block the event loop for a large period of time. The focus of this
 project is to identify function input-dependent nested loops by:
 \begin{itemize}
 \item First ,identifying the functions in code and then
-\item by identifying the input parameters of the functions and finally,
-\item by identifying the input-dependent nested loops inside the functions.
-\item Impact of using function input parameters with loops in terms
+\item by identifying the input parameters of the functions and then,
+\item by identifying the input-dependent nested loops inside the functions and finally,
+\item by analyzing the impact of function input-dependent loops in terms
 of execution time as well as denial of service attack.
 \end{itemize}
 
 
 \section{Input dependent loops and execution time}
 \label{sec:introduction}
-Execution time of the functions is really important to write scalable applications. In normal application overall execution time of function depend on the slowest function.
+Execution time of the functions is really important to write scalable applications. In normal application overall execution time of function depends upon the slowest function.
 
-Consider the code in Listing \ref{l:iterate} we have iterate function which has max as input parameter, it has one loop which is iterating up till max.
+Consider the code in Listing \ref{l:iterate} in which we have an iterate function,with function input parameter max it has single loop which is iterating up till max.
 
 So caller of function can pass input of \begin{math} 10_{10} \end{math} and execution time of simple function with 1 loop will be around \textit{11s}.
 
-\begin{lstlisting}[caption=iterate function with 1 loop,label=l:iterate,language=Java]
+\begin{lstlisting}[caption=iterate function with single loop,label=l:iterate,language=Java]
 
 function iterate(max){
 
@@ -361,18 +361,19 @@ With above functions validation is easy we added execution time to validate our 
 We run our analysis on following node modules. In order to identify nested loops we mainly focused on video streaming,audio streaming, matrix and data structure libraries to find the code using nested loops.
 Table~\ref{t:Comparison} shows how a table looks like.
 
-\begin{table}[ht]
-\begin{tabular}{ |p{2cm}||p{2cm}|p{2cm}|p{2cm}|  }
+\begin{table}[h]
+\small
+\begin{tabular}{ |p{1.9cm}||p{1.9cm}|p{1.9cm}|p{1.9cm}|  }
  \hline
  \textbf{Node Module}&\textbf{Total input-dependent loop vulnerabilities}&\textbf{Correctly Identified} &\textbf{False Positives}\\
  \hline
-loaddash&A modern JavaScript utility library delivering modularity, performance and extras.&only 1 for loop &yes  \\
+loaddash&A modern JavaScript utility library delivering modularity, performance and extras.&1 &yes  \\
 \hline 
-dashjs &Library to quality framework for building video and audio players that play back MPEG-DASH&2 for loop &yes  \\
+dashjs &Library to quality framework for building video and audio players that play back MPEG-DASH&2&yes  \\
 \hline 
-useragent &Useragent allows you to parse user agent string with high accuracy by using hand tuned dedicated regular expressions for browser matching. &only 1 for loop &yes  \\
+useragent &Useragent allows you to parse user agent string with high accuracy by using hand tuned dedicated regular expressions for browser matching. &1 &yes  \\
 \hline \\
- lru cache & This is an LRU (least recently used) cache implementation in JavaScript.&0 &yes but false positives  \\
+ lru cache & This is an LRU (least recently used) cache implementation in JavaScript.&0 &yes \\
 \hline 
 
 \end{tabular}
@@ -386,29 +387,88 @@ useragent &Useragent allows you to parse user agent string with high accuracy by
 \includegraphics[width=1\linewidth]{figures/useragent-isSafe}
 \caption[Node module useragent isSafe function]{\label{f:isSafe}Node module useragent isSafe function}
 \end{figure}
+
 In above figure \ref{f:isSafe} code on line numbers 418 and 419 is vulnerable.After running our code we identified our code on node module user agent we identified  the results as shown in the figure 
+\begin{lstlisting}[caption=Code Instrumentation,label=l:instrumentation,language=Java]
+
+/**
+ * Parses the user agent string with the generated parsers from the
+ * ua-parser project on google code.
+ *
+ * @param {String} userAgent The user agent string
+ * @param {String} [jsAgent] Optional UA from js to detect chrome frame
+ * @returns {Agent}
+ * @api public
+ */
+var process = require('process');
+var precision = 3;
+exports.parse = function parse(userAgent, jsAgent) {
+    var start = process.hrtime();
+  if (!userAgent || !isSafe(userAgent)) return new Agent();
+
+  var length = agentparserslength
+    , parsers = agentparsers
+    , i = 0
+    , parser
+    , res;
+
+  for (; i < length; i++) {
+    if (res = parsers[i][0].exec(userAgent)) {
+      parser = parsers[i];
+
+      if (parser[1]) res[1] = parser[1].replace('$1', res[1]);
+      if (!jsAgent) return new Agent(
+          res[1]
+        , parser[2] || res[2]
+        , parser[3] || res[3]
+        , parser[4] || res[4]
+        , userAgent
+      );
+
+      break;
+    }
+
+      var elapsed = process.hrtime(start)[1] / 1000000;
+      console.log(process.hrtime(start)[0] + " s, " + elapsed.toFixed(precision) + " ms - " );
+  }
+
+\end{lstlisting}
+
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.8\linewidth]{figures/useragent-result}
 \caption[Node module useragent isSafe function]{\label{f:result}Node module useragent isSafe function}
 \end{figure}
-To validate,we introduced function execution time at the start and at the end of loop inside a function as shown  in figure \ref{f:instumentation} below:
-\begin{figure}[ht]
-\centering
-\includegraphics[width=1\linewidth]{figures/useragent-instumentation}
-\caption[Node module useragent isSafe function]{\label{f:instumentation}Node module useragent isSafe function}
-\end{figure}
+
+
 
 \subsection{Manually Triggering Identified Vulnerable Function}
 
-A random test script of length  \begin{math}10^{6} \end{math} was provided as an input to a parse function and it took approximately 5 seconds to execute the method as shown in figure below:
+A random test script of length  \begin{math}10^{4} \end{math} was provided as an input to a parse function and it took approximately 7 seconds to execute the method as shown in listing \ref{l:parse} below:
+
+\begin{lstlisting}[caption=Manual Triggering of vulnerable function in npm module useragent,label=l:parse,language=Java]
+
+var useragent = require('useragent');
+useragent(true);
+var req = {}
+var string = ''
+for(var i=0; i< Math.pow(10,4); i++){
+    string += i + " ";
+}
+
+req.headers = {'user-agent': string}
+req.query = {'jsuseragent':'ok'}
+var agent2 = useragent.parse(req.headers['user-agent'], req.query.jsuseragent);
+
+\end{lstlisting}
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=1\linewidth]{figures/useragent-manual-invoking}
-\caption[Node module useragent isSafe function]{\label{f:invoking}Node module useragent isSafe function}
+\includegraphics[width=1.2\linewidth]{figures/tough-cookie}
+\caption[Tough Cookie]{\label{f:cookie}Tough Cookie}
 \end{figure}
+
 
 \section{Conclusion}
 
