@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6500 64-bit) (preloaded format=pdflatex 2018.1.21)  5 MAR 2018 20:39
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6500 64-bit) (preloaded format=pdflatex 2018.1.21)  5 MAR 2018 21:06
 entering extended mode
 **./main.tex
 (main.tex
@@ -802,6 +802,9 @@ File: lstlang1.sty 2015/06/04 1.6 listings language file
 
 LaTeX Warning: Label `f:testcases' multiply defined.
 
+
+LaTeX Warning: Label `l:parse' multiply defined.
+
 )
 \openout1 = `main.aux'.
 
@@ -1055,35 +1058,35 @@ e 440.
 <figures/tough-cookie.jpg, id=262, 752.8125pt x 387.69844pt>
 File: figures/tough-cookie.jpg Graphic file (type jpg)
 <use figures/tough-cookie.jpg>
-Package pdftex.def Info: figures/tough-cookie.jpg  used on input line 468. on i
-nput line 468.
-Package pdftex.def Info: Requested size: 287.99927pt x 148.32079pt on input lin
-e 468.
+Package pdftex.def Info: figures/tough-cookie.jpg  used on input line 467. on i
+nput line 467.
+Package pdftex.def Info: Requested size: 276.23886pt x 142.26378pt on input lin
+e 467.
 
-Overfull \hbox (47.99927pt too wide) in paragraph at lines 468--469
+Overfull \hbox (36.23886pt too wide) in paragraph at lines 467--468
  [][] 
  []
 
 (main.bbl) [5 <./figures/useragent-result.jpg> <./figures/tough-cookie.jpg>]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 504.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 504.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 502.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 502.
 
 (main.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 504.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 504.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 502.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 502.
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 7B7A3CE83436B477D784F088FE5FF0F4;1613.
 
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 504.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 502.
  ) 
 Here is how much of TeX's memory you used:
- 21091 strings out of 493312
- 390108 string characters out of 3138873
+ 21090 strings out of 493312
+ 390089 string characters out of 3138873
  547774 words of memory out of 3000000
- 24081 multiletter control sequences out of 15000+200000
+ 24080 multiletter control sequences out of 15000+200000
  29899 words of font info for 63 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
  55i,10n,60p,409b,1782s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -1095,7 +1098,7 @@ msfonts/cm/cmsy9.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/c
 m/cmtt8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/times/utmb8a.pfb><C:/P
 rogram Files/MiKTeX 2.9/fonts/type1/urw/times/utmr8a.pfb><C:/Program Files/MiKT
 eX 2.9/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (5 pages, 566478 bytes).
+Output written on main.pdf (5 pages, 566515 bytes).
 PDF statistics:
  354 PDF objects out of 1000 (max. 8388607)
  169 named destinations out of 1000 (max. 500000)
