@@ -8,6 +8,9 @@ import java.nio.file.Paths;
  */
 public class AnalyzerClient {
     public static void main(String[] args) {
+
+        //change the file location before running on other directory
+
         String modules_path = "src/test/resources";
         //String modules_path = "/home/mujahidmasood/Masters/DSS/Semester5/PTAA/nested-loop-vulnerabilities/node_modules";
         try {
